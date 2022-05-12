@@ -4,6 +4,14 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="facebook_application_id" translatable="false">397805432001964</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb397805432001964</string>
+    <string name="your_lunch">Your Lunch</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="go4lunch">Go4Lunch</string>
+    <string name="user_full_name">USER FULL NAME</string>
+    <string name="user_mail_string">user@mail.com</string>
+    <string name="open_drawer">Open</string>
+    <string name="close_drawer">Close</string>
 
 
 </resources>
