@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="facebook_application_id" translatable="false">397805432001964</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb397805432001964</string>
+
+
+</resources>
