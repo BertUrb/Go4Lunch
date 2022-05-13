@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch.ui.main.manager;
+package com.mjcdouai.go4lunch.ui.main.viewmodel;
 
 import android.content.Context;
 

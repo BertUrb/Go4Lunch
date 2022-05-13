@@ -3,6 +3,7 @@ package com.mjcdouai.go4lunch.ui.main;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.navigation.NavigationView;
 import com.mjcdouai.go4lunch.R;
+import com.mjcdouai.go4lunch.ui.main.viewmodel.UserManager;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -18,6 +20,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
+    private UserManager mUserManager = UserManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +34,39 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.menu_drawer_your_lunch:
+                break;
+            case R.id.menu_drawer_settings:
+                break;
+            case R.id.menu_drawer_logout:
+                mUserManager.signOut(this).addOnSuccessListener(aVoid -> {
+                    finish();
+                });
+
+                break;
+            default:
+                break;
+        }
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        // 5 - Handle back click to close menu
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
 
     private void configureToolbar()
     {
