@@ -6,12 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseUser;
 import com.mjcdouai.go4lunch.R;
+import com.mjcdouai.go4lunch.databinding.HomeActivityNavHeaderBinding;
 import com.mjcdouai.go4lunch.ui.main.viewmodel.UserManager;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -25,11 +35,34 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_home);
 
         configureToolbar();
         configureDrawerLayout();
         configureNavigationView();
+        updateUserInfo();
+    }
+
+    private void updateUserInfo() {
+        FirebaseUser user = mUserManager.getCurrentUser();
+
+        View headerView = mNavigationView.getHeaderView(0);
+
+        ((TextView) headerView.findViewById(R.id.user_name)).setText(user.getDisplayName());
+        ((TextView) headerView.findViewById(R.id.user_mail)).setText(user.getEmail());
+        setProfilePicture(user.getPhotoUrl());
+
+
+
+
+    }
+
+    private void setProfilePicture(Uri profilePictureUrl){
+        Glide.with(this)
+                .load(profilePictureUrl)
+                .apply(RequestOptions.circleCropTransform())
+                .into((ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.user_image));
     }
 
     @Override
