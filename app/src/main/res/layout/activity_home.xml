@@ -16,7 +16,7 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:id="@+id/profile_toolbar"
+            android:id="@+id/home_toolbar"
             android:theme="@style/ToolBarStyle"
             app:titleTextColor="@android:color/white"
             android:background="@color/colorPrimary" />
@@ -35,6 +35,7 @@
         app:menu="@menu/home_activity_menu_drawer"
         android:background="@color/purple_200"
         android:id="@+id/profile_activity_navigation_view"
+        android:layout_gravity="start"
         android:fitsSystemWindows="true"
         />
 

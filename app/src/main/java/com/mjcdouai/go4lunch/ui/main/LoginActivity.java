@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            StartProfileActivity();
+            startProfileActivity();
 
         } else {
             // Sign in failed. If response is null the user canceled the
@@ -64,18 +64,18 @@ public class LoginActivity extends AppCompatActivity {
 
         if(mUserManager.isCurrentUserLogged())
         {
-            StartProfileActivity();
+            startProfileActivity();
         }
         else
         {
-            StartSignInIntent();
+            startSignInIntent();
         }
 
 
 
 
     }
-    private void StartProfileActivity()
+    private void startProfileActivity()
     {
 
         Intent intent = new Intent(this, HomeActivity.class);
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void StartSignInIntent()
+    private void startSignInIntent()
     {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
