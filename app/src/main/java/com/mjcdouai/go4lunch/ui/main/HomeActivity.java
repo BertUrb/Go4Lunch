@@ -13,19 +13,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.mjcdouai.go4lunch.ListViewFragment;
+import com.mjcdouai.go4lunch.MapFragment;
 import com.mjcdouai.go4lunch.R;
-import com.mjcdouai.go4lunch.databinding.HomeActivityNavHeaderBinding;
+import com.mjcdouai.go4lunch.WorkmatesFragment;
 import com.mjcdouai.go4lunch.ui.main.viewmodel.UserManager;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+
+    private final Fragment mMapFragment = new MapFragment();
+    private final Fragment mListViewFragment = new ListViewFragment();
+    private final Fragment mWorkmatesFragment = new WorkmatesFragment();
+    final FragmentManager mFragmentManager = getSupportFragmentManager();
+    private Fragment mActive = mMapFragment;
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -38,10 +50,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         setContentView(R.layout.activity_home);
 
+        mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
+        mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
+        mFragmentManager.beginTransaction().add(R.id.main_content,mMapFragment, "1").commit();
+
         configureToolbar();
         configureDrawerLayout();
         configureNavigationView();
         updateUserInfo();
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.main_bottom_navigation);
+        navigation.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
 
     private void updateUserInfo() {
@@ -77,9 +96,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_drawer_logout:
                 mUserManager.signOut(this).addOnSuccessListener(aVoid -> {
                     finish();
+
                 });
 
                 break;
+            case R.id.action_map:
+                mFragmentManager.beginTransaction().hide(mActive).show(mMapFragment).commit();
+                mActive = mMapFragment;
+                break;
+            case R.id.action_list:
+                mFragmentManager.beginTransaction().hide(mActive).show(mListViewFragment).commit();
+                mActive = mListViewFragment;
+                break;
+            case R.id.action_workmates:
+                mFragmentManager.beginTransaction().hide(mActive).show(mWorkmatesFragment).commit();
+                mActive = mWorkmatesFragment;
+                break;
+
             default:
                 break;
         }
