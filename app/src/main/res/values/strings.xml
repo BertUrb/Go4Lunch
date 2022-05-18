@@ -13,5 +13,10 @@
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
 
+    <!-- BOTTOM NAVIGATION VIEW -->
+    <string name="bottom_navigation_menu_map">Map view</string>
+    <string name="bottom_navigation_menu_list">List View</string>
+    <string name="bottom_navigation_menu_workmates">Workmates</string>
+
 
 </resources>
