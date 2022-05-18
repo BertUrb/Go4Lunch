@@ -33,6 +33,8 @@ import com.mjcdouai.go4lunch.ui.main.viewmodel.UserManager;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
+
+
     private final Fragment mMapFragment = new MapFragment();
     private final Fragment mListViewFragment = new ListViewFragment();
     private final Fragment mWorkmatesFragment = new WorkmatesFragment();
