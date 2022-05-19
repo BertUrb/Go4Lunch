@@ -30,6 +30,8 @@ import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.WorkmatesFragment;
 import com.mjcdouai.go4lunch.ui.main.viewmodel.UserManager;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -63,6 +65,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.main_bottom_navigation);
         navigation.setOnItemSelectedListener(this::onNavigationItemSelected);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     private void updateUserInfo() {
