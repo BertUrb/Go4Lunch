@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch;
+package com.mjcdouai.go4lunch.ui.main.fragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -7,17 +7,16 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.util.Consumer;
-import androidx.fragment.app.Fragment;
-
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mjcdouai.go4lunch.R;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -27,7 +26,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 /**
@@ -41,6 +39,7 @@ public class MapFragment extends Fragment  implements LocationListener {
     private IMapController mMapController;
     private LocationManager mLocationManager;
     private Location mLocation;
+    private FloatingActionButton mFab;
 
     public MapFragment() {
         // Required empty public constructor
@@ -51,15 +50,11 @@ public class MapFragment extends Fragment  implements LocationListener {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapFragment.
+      * @return A new instance of fragment MapFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance(String param1, String param2) {
-        MapFragment fragment = new MapFragment();
+    public static MapFragment newInstance() {
 
-        return fragment;
+        return new MapFragment();
     }
 
     @Override
@@ -82,6 +77,7 @@ public class MapFragment extends Fragment  implements LocationListener {
         mMap.setTileSource(TileSourceFactory.MAPNIK);
 
 
+        assert ctx != null;
         mLocationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         MyLocationNewOverlay locationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),mMap);
         locationNewOverlay.enableMyLocation();
@@ -111,6 +107,13 @@ public class MapFragment extends Fragment  implements LocationListener {
 
         mMapController.setCenter(startPosition);
 
+        mFab = view.findViewById(R.id.fab_center_view);
+        mFab.setOnClickListener(v-> {
+            GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(),mLocation.getLongitude());
+            mMapController.animateTo(geoPoint);
+
+        });
+
 
 
         return view;
@@ -118,8 +121,7 @@ public class MapFragment extends Fragment  implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         mLocation = location;
-        GeoPoint geoPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-        mMapController.animateTo(geoPoint);
+
     }
 
 

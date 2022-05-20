@@ -14,7 +14,7 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mjcdouai.go4lunch.R;
-import com.mjcdouai.go4lunch.ui.main.viewmodel.UserManager;
+import com.mjcdouai.go4lunch.ui.main.manager.UserManager;
 
 import java.util.Arrays;
 import java.util.List;
