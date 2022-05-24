@@ -75,6 +75,9 @@ public class OverpassQueryResult {
             @SerializedName("operator")
             public String operator;
 
+            @SerializedName("cuisine")
+            public String cuisine;
+
         }
     }
 }
