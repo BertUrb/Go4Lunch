@@ -25,6 +25,10 @@ import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassQueryResult;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.DelayedMapListener;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -86,6 +90,22 @@ public class MapFragment extends Fragment implements LocationListener {
 
         mMap = view.findViewById(R.id.map);
         mMap.setTileSource(TileSourceFactory.MAPNIK);
+        mMap.setMultiTouchControls(true);
+
+        mMap.addMapListener(new DelayedMapListener(new MapListener() {
+            @Override
+            public boolean onScroll(ScrollEvent event) {
+                Log.d("tag", "onScroll: ");
+                enqueueOverpassQuery();
+                return false;
+            }
+
+            @Override
+            public boolean onZoom(ZoomEvent event) {
+                return false;
+            }
+        },1000));
+
 
 
         assert ctx != null;
@@ -166,16 +186,15 @@ public class MapFragment extends Fragment implements LocationListener {
     }
 
     private void enqueueOverpassQuery() {
-        String query = "[out:json];nwr[amenity=restaurant](around:3000," + mLocation.getLatitude() + "," + mLocation.getLongitude() + "); out;";
 
+        String query = "[out:json][timeout:25];nwr[amenity=restaurant](around:1000," + mMap.getMapCenter().getLatitude() + "," + mMap.getMapCenter().getLongitude() + "); out;";
         Call<OverpassQueryResult> call = mOverpassApi.loadRestaurantNear(query);
-
-
+        Log.d("TAG", "enqueueOverpassQuery: " + query);
         call.enqueue(new Callback<OverpassQueryResult>() {
 
             @Override
             public void onResponse(Call<OverpassQueryResult> call, Response<OverpassQueryResult> response) {
-
+                Log.d("TAG", "onResponse: Réponse reçue");
                 for (OverpassQueryResult.Element element : response.body().elements
                 ) {
 
@@ -183,11 +202,12 @@ public class MapFragment extends Fragment implements LocationListener {
 
                 }
 
+
             }
 
             @Override
             public void onFailure(Call<OverpassQueryResult> call, Throwable t) {
-                Log.d("TAG", "onResponse: raté ");
+                Log.d("TAG", "onResponse: failed =>" + Log.getStackTraceString(t));
             }
         });
     }
