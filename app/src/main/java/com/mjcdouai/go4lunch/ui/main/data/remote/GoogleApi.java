@@ -18,12 +18,9 @@ public interface GoogleApi {
                                                 @Query("key") String apiKey);
 
 
-    @GET("search/json")
-    Call<GoogleQueryResult>  loadRestaurantNear(@Query("location") String location,
-                                                @Query("radius") int radius,
-                                                @Query("type") String type,
-                                                @Query("key") String apiKey,
-                                                @Query("pageToken") String nextPageToken);
+    @GET("nearbysearch/json")
+    Call<GoogleQueryResult>  loadNextPage(@Query("key") String apiKey,
+                                          @Query("pageToken") String nextPageToken);
     @GET("place/photo")
     Bitmap loadPhoto(@Query("photo_reference") String photoReference,
                      @Query("key") String apiKey);

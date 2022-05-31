@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
+import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
 import com.mjcdouai.go4lunch.ui.main.data.remote.GoogleQueryResult;
 import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassApi;
 import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassQueryResult;
@@ -58,6 +59,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
     private LocationManager mLocationManager;
     private Location mLocation;
     private FloatingActionButton mFab;
+    private FragmentMapBinding mMapBinding;
 
     RestaurantsViewModel.RestaurantViewModelCallBack callBack = this;
 
@@ -93,12 +95,13 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
 
         Context ctx = getActivity();
 
+        mMapBinding = FragmentMapBinding.inflate(inflater,container,false);
+
         mRestaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
-        View view = inflater.inflate(R.layout.fragment_map, container, false);
+        View view = mMapBinding.getRoot();
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
-        mMap = view.findViewById(R.id.map);
+        mMap = mMapBinding.map;
         mMap.setTileSource(TileSourceFactory.MAPNIK);
         mMap.setMultiTouchControls(true);
 
@@ -106,7 +109,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
             @Override
             public boolean onScroll(ScrollEvent event) {
                 Log.d("tag", "onScroll: ");
-                mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,"");
+                mRestaurantsViewModel.fetchRestaurant(callBack,mMap.getMapCenter().getLatitude(),mMap.getMapCenter().getLongitude(),1000,null);
                 return false;
             }
 
@@ -157,9 +160,9 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
         GeoPoint startPosition = new GeoPoint(lat, lg);
 
         mMapController.setCenter(startPosition);
-        mRestaurantsViewModel.fetchRestaurant(this,lat,lg,1000,"");
+        mRestaurantsViewModel.fetchRestaurant(this,lat,lg,1000,null);
 
-        mFab = view.findViewById(R.id.fab_center_view);
+        mFab = mMapBinding.fabCenterView;
         mFab.setOnClickListener(this::onFabClick);
 
 
@@ -193,11 +196,14 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
     private void onFabClick(View v) {
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
-        mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,"");
+        mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,null);
 
     }
     @Override
     public void onResponse(GoogleQueryResult result) {
+
+        Log.d("TAG", "Map fragment onResponse: " + result.status);
+
 
         for(GoogleQueryResult.Result res : result.results)
         {
@@ -208,6 +214,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
 
     @Override
     public void onFailure() {
+        Log.d("TAG", "onFailure: FAIL");
 
     }
 }

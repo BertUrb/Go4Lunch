@@ -12,6 +12,9 @@ public class GoogleQueryResult {
     @SerializedName("next_page_token")
     public String next_page_token;
 
+    @SerializedName("status")
+    public String status;
+
 
     public static class Result {
 
