@@ -17,11 +17,14 @@ import android.view.ViewGroup;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
+import com.mjcdouai.go4lunch.ui.main.data.remote.GoogleQueryResult;
 import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassApi;
 import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassQueryResult;
+import com.mjcdouai.go4lunch.ui.main.viewModel.RestaurantsViewModel;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -36,6 +39,8 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.Objects;
+
 import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,13 +51,17 @@ import retrofit2.Response;
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements LocationListener {
+public class MapFragment extends Fragment implements LocationListener, RestaurantsViewModel.RestaurantViewModelCallBack {
 
     private MapView mMap;
     private IMapController mMapController;
     private LocationManager mLocationManager;
     private Location mLocation;
     private FloatingActionButton mFab;
+
+    RestaurantsViewModel.RestaurantViewModelCallBack callBack = this;
+
+    private RestaurantsViewModel mRestaurantsViewModel;
 
     final private OverpassApi mOverpassApi = OverpassApi.retrofit.create(OverpassApi.class);
 
@@ -84,6 +93,7 @@ public class MapFragment extends Fragment implements LocationListener {
 
         Context ctx = getActivity();
 
+        mRestaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -96,7 +106,7 @@ public class MapFragment extends Fragment implements LocationListener {
             @Override
             public boolean onScroll(ScrollEvent event) {
                 Log.d("tag", "onScroll: ");
-                enqueueOverpassQuery();
+                mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,"");
                 return false;
             }
 
@@ -147,7 +157,7 @@ public class MapFragment extends Fragment implements LocationListener {
         GeoPoint startPosition = new GeoPoint(lat, lg);
 
         mMapController.setCenter(startPosition);
-        enqueueOverpassQuery();
+        mRestaurantsViewModel.fetchRestaurant(this,lat,lg,1000,"");
 
         mFab = view.findViewById(R.id.fab_center_view);
         mFab.setOnClickListener(this::onFabClick);
@@ -162,53 +172,42 @@ public class MapFragment extends Fragment implements LocationListener {
 
     }
 
-    void addMarker(OverpassQueryResult.Element restaurant) {
-        Log.d("TAG", "addMarker: " + restaurant.lat);
-        Marker marker = new Marker(mMap);
-        marker.setPosition(new GeoPoint(restaurant.lat, restaurant.lon));
-        marker.setTitle(restaurant.tags.name);
-        marker.setSubDescription(restaurant.tags.cuisine + "\n" + restaurant.tags.addressHouseNumber + " " + restaurant.tags.addressStreet + " " + restaurant.tags.addressCity);
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.showInfoWindow();
-        Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
-        marker.setIcon(d);
-        mMap.getOverlays().add(marker);
+    void addMarker(GoogleQueryResult.Result restaurant) {
+        if(Objects.equals(restaurant.business_status, "OPERATIONAL")) {
+            Log.d("TAG", "addMarker: " + restaurant.name);
+            Marker marker = new Marker(mMap);
+            marker.setPosition(new GeoPoint(restaurant.geometry.location.lat, restaurant.geometry.location.lon));
+            marker.setTitle(restaurant.name);
+            marker.setSubDescription(restaurant.address);
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.showInfoWindow();
+            Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
+            marker.setIcon(d);
+            mMap.getOverlays().add(marker);
 
-        mMap.invalidate();
+            mMap.invalidate();
+        }
     }
 
 
     private void onFabClick(View v) {
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
-        enqueueOverpassQuery();
+        mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,"");
+
+    }
+    @Override
+    public void onResponse(GoogleQueryResult result) {
+
+        for(GoogleQueryResult.Result res : result.results)
+        {
+            addMarker(res);
+        }
 
     }
 
-    private void enqueueOverpassQuery() {
+    @Override
+    public void onFailure() {
 
-        String query = "[out:json][timeout:25];nwr[amenity=restaurant](around:1000," + mMap.getMapCenter().getLatitude() + "," + mMap.getMapCenter().getLongitude() + "); out;";
-        Call<OverpassQueryResult> call = mOverpassApi.loadRestaurantNear(query);
-        Log.d("TAG", "enqueueOverpassQuery: " + query);
-        call.enqueue(new Callback<OverpassQueryResult>() {
-
-            @Override
-            public void onResponse(Call<OverpassQueryResult> call, Response<OverpassQueryResult> response) {
-                Log.d("TAG", "onResponse: Réponse reçue");
-                for (OverpassQueryResult.Element element : response.body().elements
-                ) {
-
-                    addMarker(element);
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<OverpassQueryResult> call, Throwable t) {
-                Log.d("TAG", "onResponse: failed =>" + Log.getStackTraceString(t));
-            }
-        });
     }
 }
