@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.mjcdouai.go4lunch.databinding.ActivityHomeBinding;
 import com.mjcdouai.go4lunch.ui.main.fragment.ListViewFragment;
 import com.mjcdouai.go4lunch.ui.main.fragment.MapFragment;
 import com.mjcdouai.go4lunch.R;
@@ -32,8 +33,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-
-
+    private ActivityHomeBinding mHomeBinding;
 
     private final Fragment mMapFragment = new MapFragment();
     private final Fragment mListViewFragment = new ListViewFragment();
@@ -50,7 +50,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_home);
+        mHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
+
+        setContentView(mHomeBinding.getRoot());
 
         mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
         mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
@@ -61,7 +63,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         configureNavigationView();
         updateUserInfo();
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.main_bottom_navigation);
+        BottomNavigationView navigation = mHomeBinding.mainBottomNavigation;
         navigation.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
 
@@ -146,19 +148,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void configureToolbar()
     {
-        mToolbar = (Toolbar) findViewById(R.id.home_toolbar);
+        mToolbar = mHomeBinding.homeToolbar;
         setSupportActionBar(mToolbar);
     }
 
     private void configureDrawerLayout(){
-        mDrawerLayout =(DrawerLayout) findViewById(R.id.profile_activity_drawer_layout);
+        mDrawerLayout =mHomeBinding.profileActivityDrawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
 
     private void configureNavigationView() {
-        mNavigationView = (NavigationView) findViewById(R.id.profile_activity_navigation_view);
+        mNavigationView = mHomeBinding.profileActivityNavigationView;
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 }
