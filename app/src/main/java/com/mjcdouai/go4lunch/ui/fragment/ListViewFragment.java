@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch.ui.main.fragment;
+package com.mjcdouai.go4lunch.ui.fragment;
 
 import android.os.Bundle;
 

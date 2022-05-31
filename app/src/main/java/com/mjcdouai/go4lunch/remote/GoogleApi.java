@@ -1,8 +1,6 @@
-package com.mjcdouai.go4lunch.ui.main.data.remote;
+package com.mjcdouai.go4lunch.remote;
 
 import android.graphics.Bitmap;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

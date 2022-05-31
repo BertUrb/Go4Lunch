@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch.ui.main.repository;
+package com.mjcdouai.go4lunch.repository;
 
 import android.content.Context;
 

@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch.ui.main;
+package com.mjcdouai.go4lunch.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -23,11 +23,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.mjcdouai.go4lunch.databinding.ActivityHomeBinding;
-import com.mjcdouai.go4lunch.ui.main.fragment.ListViewFragment;
-import com.mjcdouai.go4lunch.ui.main.fragment.MapFragment;
+import com.mjcdouai.go4lunch.ui.fragment.ListViewFragment;
+import com.mjcdouai.go4lunch.ui.fragment.MapFragment;
 import com.mjcdouai.go4lunch.R;
-import com.mjcdouai.go4lunch.ui.main.fragment.WorkmatesFragment;
-import com.mjcdouai.go4lunch.ui.main.manager.UserManager;
+import com.mjcdouai.go4lunch.ui.fragment.WorkmatesFragment;
+import com.mjcdouai.go4lunch.manager.UserManager;
 
 import pub.devrel.easypermissions.EasyPermissions;
 

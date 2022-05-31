@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch.ui.main.data.remote;
+package com.mjcdouai.go4lunch.remote;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,6 +1,5 @@
-package com.mjcdouai.go4lunch.ui.main;
+package com.mjcdouai.go4lunch.ui;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +13,7 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mjcdouai.go4lunch.R;
-import com.mjcdouai.go4lunch.ui.main.manager.UserManager;
+import com.mjcdouai.go4lunch.manager.UserManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
-            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>() {
-                @Override
-                public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
-                    onSignInResult(result);
-                }
-            }
+            result -> onSignInResult(result)
     );
 
 

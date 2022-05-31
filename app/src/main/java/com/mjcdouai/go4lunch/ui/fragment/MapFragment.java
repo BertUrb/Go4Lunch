@@ -1,4 +1,4 @@
-package com.mjcdouai.go4lunch.ui.main.fragment;
+package com.mjcdouai.go4lunch.ui.fragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -22,10 +22,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
-import com.mjcdouai.go4lunch.ui.main.data.remote.GoogleQueryResult;
-import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassApi;
-import com.mjcdouai.go4lunch.ui.main.data.remote.OverpassQueryResult;
-import com.mjcdouai.go4lunch.ui.main.viewModel.RestaurantsViewModel;
+import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
+import com.mjcdouai.go4lunch.remote.OverpassApi;
+import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -43,9 +42,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.

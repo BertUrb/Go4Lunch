@@ -1,17 +1,14 @@
-package com.mjcdouai.go4lunch.ui.main.viewModel;
+package com.mjcdouai.go4lunch.viewModel;
 
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModel;
 
-import com.mjcdouai.go4lunch.ui.main.data.remote.GoogleApi;
-import com.mjcdouai.go4lunch.ui.main.data.remote.GoogleQueryResult;
+import com.mjcdouai.go4lunch.remote.GoogleApi;
+import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Objects;
-import java.util.Observable;
 
 import retrofit2.Call;
 import retrofit2.Callback;

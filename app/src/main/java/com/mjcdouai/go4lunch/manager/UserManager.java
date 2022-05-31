@@ -1,10 +1,10 @@
-package com.mjcdouai.go4lunch.ui.main.manager;
+package com.mjcdouai.go4lunch.manager;
 
 import android.content.Context;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.mjcdouai.go4lunch.ui.main.repository.UserRepository;
+import com.mjcdouai.go4lunch.repository.UserRepository;
 
 public class UserManager {
     private static volatile UserManager instance;
