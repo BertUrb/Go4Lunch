@@ -1,6 +1,7 @@
 package com.mjcdouai.go4lunch.remote;
 
 import android.graphics.Bitmap;
+import android.media.Image;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -17,11 +18,16 @@ public interface GoogleApi {
 
 
     @GET("nearbysearch/json")
-    Call<GoogleQueryResult>  loadNextPage(@Query("key") String apiKey,
-                                          @Query("pageToken") String nextPageToken);
-    @GET("place/photo")
-    Bitmap loadPhoto(@Query("photo_reference") String photoReference,
-                     @Query("key") String apiKey);
+    Call<GoogleQueryResult>  loadNextPage(
+                                            @Query("key") String apiKey,
+                                            @Query("pageToken") String nextPageToken);
+
+    static String getImageUrl(String imageReference) {
+        return "https://maps.googleapis.com/maps/api/place/photo" +
+                "?maxwidth=400" +
+                "&photoreference=" + imageReference +
+                "&key=***REMOVED***" ;
+    }
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://maps.googleapis.com/maps/api/place/")

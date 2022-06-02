@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="110dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -10,7 +10,7 @@
         android:id="@+id/restaurant_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/restaurant_distance"
-        app:layout_constraintTop_toTopOf="@id/restaurant_image" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,6 +19,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/restaurant_image"
         app:layout_constraintTop_toBottomOf="@id/restaurant_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_open_until"
+        app:layout_constraintTop_toBottomOf="@id/restaurant_address"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,10 +61,15 @@
         />
 
     <ImageView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_width="100dp"
+        android:src="@drawable/ic_baseline_image_24"
+        android:layout_height="100dp"
         android:id="@+id/restaurant_image"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="centerCrop"
+
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
 
 

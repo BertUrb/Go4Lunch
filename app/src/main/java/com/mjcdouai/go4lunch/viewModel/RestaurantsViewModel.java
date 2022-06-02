@@ -1,5 +1,8 @@
 package com.mjcdouai.go4lunch.viewModel;
 
+import android.graphics.Bitmap;
+import android.icu.text.Transliterator;
+import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -9,6 +12,8 @@ import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,10 +23,8 @@ public class RestaurantsViewModel extends ViewModel {
     private static final String KEY = "***REMOVED***";
     private final GoogleApi mGoogleApi = GoogleApi.retrofit.create(GoogleApi.class);
 
-
     public void fetchRestaurant(RestaurantViewModelCallBack callback, double centerLat, double centerLon, int radius,@Nullable String nextPage)
     {
-
         Call<GoogleQueryResult> call;
       if(nextPage == null) {
            call = mGoogleApi.loadRestaurantNear(centerLat + "," + centerLon,
@@ -44,12 +47,17 @@ public class RestaurantsViewModel extends ViewModel {
         call.enqueue(new Callback<GoogleQueryResult>() {
             @Override
             public void onResponse(Call<GoogleQueryResult> call, Response<GoogleQueryResult> response) {
+
+
+
+
+
                 callbacksWeakReference.get().onResponse(response.body());
-            if( response.body().next_page_token != null) {
+           /* if( response.body().next_page_token != null) {
                 Log.d("TAG", "onResponse: " + response.body().next_page_token);
                 Log.d("TAG", "status: " + response.body().status);
                 fetchRestaurant(callback, centerLat, centerLon, radius, response.body().next_page_token);
-            }
+            }*/
 
        }
 
@@ -61,9 +69,15 @@ public class RestaurantsViewModel extends ViewModel {
 
 
 
+
+
+
+
+
     }
+
     public interface RestaurantViewModelCallBack {
-        void onResponse(GoogleQueryResult result);
+        void onResponse(GoogleQueryResult googleQueryResult);
 
         void onFailure();
     }

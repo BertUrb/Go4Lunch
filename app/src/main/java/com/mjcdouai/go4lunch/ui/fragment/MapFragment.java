@@ -1,12 +1,10 @@
 package com.mjcdouai.go4lunch.ui.fragment;
 
-import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,7 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
 import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
-import com.mjcdouai.go4lunch.remote.OverpassApi;
+import com.mjcdouai.go4lunch.utils.LocationHelper;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import org.osmdroid.api.IMapController;
@@ -41,8 +38,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.Objects;
 
-import pub.devrel.easypermissions.EasyPermissions;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
@@ -52,16 +47,15 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
 
     private MapView mMap;
     private IMapController mMapController;
-    private LocationManager mLocationManager;
+    private LocationHelper mLocationHelper;
     private Location mLocation;
     private FloatingActionButton mFab;
     private FragmentMapBinding mMapBinding;
 
     RestaurantsViewModel.RestaurantViewModelCallBack callBack = this;
 
-    private RestaurantsViewModel mRestaurantsViewModel;
 
-    final private OverpassApi mOverpassApi = OverpassApi.retrofit.create(OverpassApi.class);
+    private RestaurantsViewModel mRestaurantsViewModel;
 
     public MapFragment() {
         // Required empty public constructor
@@ -91,6 +85,13 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
 
         Context ctx = getActivity();
 
+        mLocationHelper = new LocationHelper((Activity)this.getHost(),ctx);
+        mLocation = mLocationHelper.getLocation();
+
+
+
+
+
         mMapBinding = FragmentMapBinding.inflate(inflater,container,false);
 
         mRestaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
@@ -116,9 +117,6 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
         },1000));
 
 
-
-        assert ctx != null;
-        mLocationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         MyLocationNewOverlay locationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), mMap);
         locationNewOverlay.enableMyLocation();
         mMap.getOverlays().add(locationNewOverlay);
@@ -126,23 +124,6 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
         mMapController = mMap.getController();
         mMapController.setZoom(15.0);
 
-        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-
-            EasyPermissions.requestPermissions(this, "test", 55, perms);
-
-        }
-        mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        if (mLocation == null) {
-            mLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        }
-
-        if (mLocation == null) {
-            mLocation = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        }
-
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
 
         double lat = 48.856614;
         double lg = 2.3522219;
@@ -162,12 +143,13 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
         mFab.setOnClickListener(this::onFabClick);
 
 
+
         return view;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocation = location;
+        mLocation = mLocationHelper.getLocation();
 
     }
 
@@ -190,6 +172,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
 
 
     private void onFabClick(View v) {
+        mLocation = mLocationHelper.getLocation();
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
         mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,null);
@@ -198,15 +181,13 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
     @Override
     public void onResponse(GoogleQueryResult result) {
 
-        Log.d("TAG", "Map fragment onResponse: " + result.status);
-
-
         for(GoogleQueryResult.Result res : result.results)
         {
             addMarker(res);
         }
 
     }
+
 
     @Override
     public void onFailure() {

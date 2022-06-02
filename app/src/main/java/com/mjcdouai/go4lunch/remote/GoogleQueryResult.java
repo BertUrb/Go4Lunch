@@ -44,11 +44,15 @@ public class GoogleQueryResult {
                 public double lon;
             }
         }
+        @SerializedName("photos")
+        public List<Photo> photos = new ArrayList<>();
+
+        public static class Photo {
+            @SerializedName("photo_reference")
+            public String mPhotoReference;
+        }
     }
 
-    public static class Photo {
-        @SerializedName("photo_reference")
-        public String mPhotoReference;
-    }
+
 
 }

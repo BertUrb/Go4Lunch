@@ -119,10 +119,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.action_list:
                 mFragmentManager.beginTransaction().hide(mActive).show(mListViewFragment).commit();
                 mActive = mListViewFragment;
+
                 break;
             case R.id.action_workmates:
                 mFragmentManager.beginTransaction().hide(mActive).show(mWorkmatesFragment).commit();
                 mActive = mWorkmatesFragment;
+
                 break;
 
             default:
