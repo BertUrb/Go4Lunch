@@ -30,6 +30,9 @@ public class GoogleQueryResult {
         @SerializedName("vicinity")
         public String address;
 
+        @SerializedName("place_id")
+        public String place_id;
+
         @SerializedName("geometry")
         public Geometry geometry = new Geometry();
 
@@ -43,6 +46,14 @@ public class GoogleQueryResult {
                 @SerializedName("lng")
                 public double lon;
             }
+        }
+        @SerializedName("opening_hours")
+        public OpeningHours opening_hours = new OpeningHours();
+
+        public static class OpeningHours {
+            @SerializedName("open_now")
+            public boolean open_now;
+
         }
         @SerializedName("photos")
         public List<Photo> photos = new ArrayList<>();

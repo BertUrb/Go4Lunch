@@ -10,7 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface GoogleApi {
-    @GET("search/json")
+    @GET("nearbysearch/json")
     Call<GoogleQueryResult>  loadRestaurantNear(@Query("location") String location,
                                                 @Query("radius") int radius,
                                                 @Query("type") String type,
@@ -28,6 +28,10 @@ public interface GoogleApi {
                 "&photoreference=" + imageReference +
                 "&key=***REMOVED***" ;
     }
+
+    @GET("details/json")
+    Call<GooglePlaceDetailsResult> loadRestaurantDetails(@Query("place_id") String placeId,
+                                                         @Query("key") String apiKey);
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://maps.googleapis.com/maps/api/place/")

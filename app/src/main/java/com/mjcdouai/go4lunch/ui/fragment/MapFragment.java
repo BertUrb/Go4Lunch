@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
-import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
+import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.utils.LocationHelper;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
@@ -36,14 +36,14 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.util.Objects;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements LocationListener, RestaurantsViewModel.RestaurantViewModelCallBack {
+public class MapFragment extends Fragment {
 
     private MapView mMap;
     private IMapController mMapController;
@@ -52,7 +52,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
     private FloatingActionButton mFab;
     private FragmentMapBinding mMapBinding;
 
-    RestaurantsViewModel.RestaurantViewModelCallBack callBack = this;
+
 
 
     private RestaurantsViewModel mRestaurantsViewModel;
@@ -68,9 +68,11 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
      *
      * @return A new instance of fragment MapFragment.
      */
-    public static MapFragment newInstance() {
+    public static MapFragment newInstance(RestaurantsViewModel restaurantsViewModel) {
+        MapFragment mapFragment = new MapFragment();
+        mapFragment.mRestaurantsViewModel = restaurantsViewModel;
 
-        return new MapFragment();
+        return mapFragment;
     }
 
     @Override
@@ -85,16 +87,17 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
 
         Context ctx = getActivity();
 
-        mLocationHelper = new LocationHelper((Activity)this.getHost(),ctx);
-        mLocation = mLocationHelper.getLocation();
+        mLocationHelper = new LocationHelper(this.getActivity(),getContext());
+        mLocation=  mLocationHelper.getLocation();
+
+        GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
 
-
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
 
         mMapBinding = FragmentMapBinding.inflate(inflater,container,false);
 
-        mRestaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
         View view = mMapBinding.getRoot();
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -106,7 +109,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
             @Override
             public boolean onScroll(ScrollEvent event) {
                 Log.d("tag", "onScroll: ");
-                mRestaurantsViewModel.fetchRestaurant(callBack,mMap.getMapCenter().getLatitude(),mMap.getMapCenter().getLongitude(),1000,null);
+               // mRestaurantsViewModel.fetchRestaurant(callBack,mMap.getMapCenter().getLatitude(),mMap.getMapCenter().getLongitude(),1000,null);
                 return false;
             }
 
@@ -124,42 +127,33 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
         mMapController = mMap.getController();
         mMapController.setZoom(15.0);
 
-
-        double lat = 48.856614;
-        double lg = 2.3522219;
-
-
-        if (mLocation != null) {
-            lat = mLocation.getLatitude();
-            lg = mLocation.getLongitude();
-        }
-
-        GeoPoint startPosition = new GeoPoint(lat, lg);
-
         mMapController.setCenter(startPosition);
-        mRestaurantsViewModel.fetchRestaurant(this,lat,lg,1000,null);
 
-        mFab = mMapBinding.fabCenterView;
+
+              mFab = mMapBinding.fabCenterView;
         mFab.setOnClickListener(this::onFabClick);
-
-
 
         return view;
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        mLocation = mLocationHelper.getLocation();
+
+    public void getRestaurantObserver(List<Restaurant> restaurantList)
+    {
+        for (Restaurant restaurant: restaurantList) {
+            addMarker(restaurant);
+
+        }
 
     }
 
-    void addMarker(GoogleQueryResult.Result restaurant) {
-        if(Objects.equals(restaurant.business_status, "OPERATIONAL")) {
-            Log.d("TAG", "addMarker: " + restaurant.name);
+
+    void addMarker(Restaurant restaurant) {
+
+            Log.d("TAG", "addMarker: " + restaurant.getName());
             Marker marker = new Marker(mMap);
-            marker.setPosition(new GeoPoint(restaurant.geometry.location.lat, restaurant.geometry.location.lon));
-            marker.setTitle(restaurant.name);
-            marker.setSubDescription(restaurant.address);
+            marker.setPosition(new GeoPoint(restaurant.getLatitude(), restaurant.getLongitude()));
+            marker.setTitle(restaurant.getName());
+            marker.setSubDescription(restaurant.getAddress());
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.showInfoWindow();
             Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
@@ -167,7 +161,7 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
             mMap.getOverlays().add(marker);
 
             mMap.invalidate();
-        }
+
     }
 
 
@@ -175,23 +169,9 @@ public class MapFragment extends Fragment implements LocationListener, Restauran
         mLocation = mLocationHelper.getLocation();
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
-        mRestaurantsViewModel.fetchRestaurant(callBack,mLocation.getLatitude(),mLocation.getLongitude(),1000,null);
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
-    }
-    @Override
-    public void onResponse(GoogleQueryResult result) {
-
-        for(GoogleQueryResult.Result res : result.results)
-        {
-            addMarker(res);
-        }
 
     }
 
-
-    @Override
-    public void onFailure() {
-        Log.d("TAG", "onFailure: FAIL");
-
-    }
 }

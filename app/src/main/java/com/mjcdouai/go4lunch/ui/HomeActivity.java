@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,6 +29,7 @@ import com.mjcdouai.go4lunch.ui.fragment.MapFragment;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.ui.fragment.WorkmatesFragment;
 import com.mjcdouai.go4lunch.manager.UserManager;
+import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -35,11 +37,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private ActivityHomeBinding mHomeBinding;
 
-    private final Fragment mMapFragment = new MapFragment();
-    private final Fragment mListViewFragment = new ListViewFragment();
+    private Fragment mMapFragment;
+    private Fragment mListViewFragment;
     private final Fragment mWorkmatesFragment = new WorkmatesFragment();
     final FragmentManager mFragmentManager = getSupportFragmentManager();
     private Fragment mActive = mMapFragment;
+
+    private RestaurantsViewModel mRestaurantsViewModel;
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -51,7 +55,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         mHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
-
+        mRestaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
+        mMapFragment = MapFragment.newInstance(mRestaurantsViewModel);
+        mActive = mMapFragment;
+        mListViewFragment = ListViewFragment.newInstance(mRestaurantsViewModel);
         setContentView(mHomeBinding.getRoot());
 
         mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();

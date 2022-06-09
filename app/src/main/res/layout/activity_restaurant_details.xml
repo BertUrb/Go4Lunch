@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/red"
+    tools:context=".ui.RestaurantDetailsActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/restaurant_image" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/join_fab"
+        app:layout_constraintTop_toBottomOf="@id/restaurant_image"
+        app:layout_constraintBottom_toBottomOf="@id/restaurant_image"
+        app:layout_constraintEnd_toEndOf="@id/restaurant_image"
+        app:srcCompat="@drawable/ic_baseline_check_circle_outline_24"
+        android:backgroundTint="@color/white"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_name"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/restaurant_image"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_stars"
+        app:layout_constraintStart_toEndOf="@id/restaurant_name"
+        app:layout_constraintTop_toBottomOf="@id/restaurant_image"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/restaurant_address_and_cuisine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/restaurant_name"
+        />
+
+    <FrameLayout
+        app:layout_constraintTop_toBottomOf="@id/restaurant_address_and_cuisine"
+        android:id="@+id/frame_with_btn"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="90dp">
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/call_btn"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_horizontal"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="#FFFFFF"
+            android:drawableTop="@drawable/ic_baseline_call_48"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:text="@string/call_btn"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/star_btn"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/round_star_black_48dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:text="@string/like_btn"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/web_btn"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="30dp"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/round_public_black_48dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:text="@string/website_btn"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            tools:ignore="RtlCompat" />
+
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/workmates_item_list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frame_with_btn"
+        android:id="@+id/joining_workmates" />
+
+
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

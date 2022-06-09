@@ -12,6 +12,7 @@
     <string name="user_mail_string">user@mail.com</string>
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
+    <string name="open_until">Open until: </string>
 
     <!-- BOTTOM NAVIGATION VIEW -->
     <string name="bottom_navigation_menu_map">Map view</string>
@@ -22,6 +23,11 @@
     <string name="hello_List_fragment">Hello List View fragment</string>
     <string name="hello_workmates_fragment">Hello workmates fragment</string>
     <string name="submit">center view</string>
+    <string name="Open">Open</string>
+    <string name="Close">Closed</string>
+    <string name="like_btn">Like</string>
+    <string name="call_btn">Call</string>
+    <string name="website_btn">Website</string>
 
 
 </resources>
