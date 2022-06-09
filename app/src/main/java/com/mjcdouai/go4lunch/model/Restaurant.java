@@ -174,4 +174,6 @@ public class Restaurant implements Parcelable {
         parcel.writeStringList(mPhotoReferences);
         parcel.writeFloat(mRating);
     }
+
+
 }
