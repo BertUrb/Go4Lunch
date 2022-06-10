@@ -26,10 +26,10 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
     Location myLocation;
 
 
-    public RestaurantRecyclerviewAdapter(RestaurantListWithMyLocation restaurantListWithMyLocation, OnClickRestaurantListener onClickRestaurantListener) {
-        mRestaurantList = restaurantListWithMyLocation.mRestaurantList;
+    public RestaurantRecyclerviewAdapter(List<Restaurant> restaurantList, Location location, OnClickRestaurantListener onClickRestaurantListener) {
+        mRestaurantList = restaurantList;
         mOnClickRestaurantListener = onClickRestaurantListener;
-        myLocation = restaurantListWithMyLocation.myLocation;
+        myLocation = location;
     }
 
     @NonNull

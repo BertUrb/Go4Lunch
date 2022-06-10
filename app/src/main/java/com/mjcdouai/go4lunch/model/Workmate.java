@@ -1,6 +1,6 @@
 package com.mjcdouai.go4lunch.model;
 
-public class Workmates {
+public class Workmate {
     private final String mName;
     private final String mPhotoUrl;
     private String mChosenRestaurantId;
@@ -21,7 +21,7 @@ public class Workmates {
         mChosenRestaurantId = chosenRestaurantId;
     }
 
-    public Workmates(String name, String photoUrl) {
+    public Workmate(String name, String photoUrl) {
         mName = name;
         mPhotoUrl = photoUrl;
     }

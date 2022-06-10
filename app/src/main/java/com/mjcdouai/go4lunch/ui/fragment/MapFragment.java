@@ -92,10 +92,7 @@ public class MapFragment extends Fragment {
 
         GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
-
         mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
-
-
         mMapBinding = FragmentMapBinding.inflate(inflater,container,false);
 
         View view = mMapBinding.getRoot();
@@ -104,21 +101,6 @@ public class MapFragment extends Fragment {
         mMap = mMapBinding.map;
         mMap.setTileSource(TileSourceFactory.MAPNIK);
         mMap.setMultiTouchControls(true);
-
-        mMap.addMapListener(new DelayedMapListener(new MapListener() {
-            @Override
-            public boolean onScroll(ScrollEvent event) {
-                Log.d("tag", "onScroll: ");
-               // mRestaurantsViewModel.fetchRestaurant(callBack,mMap.getMapCenter().getLatitude(),mMap.getMapCenter().getLongitude(),1000,null);
-                return false;
-            }
-
-            @Override
-            public boolean onZoom(ZoomEvent event) {
-                return false;
-            }
-        },1000));
-
 
         MyLocationNewOverlay locationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), mMap);
         locationNewOverlay.enableMyLocation();
@@ -170,8 +152,6 @@ public class MapFragment extends Fragment {
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
         mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
-
-
     }
 
 }

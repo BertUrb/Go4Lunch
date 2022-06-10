@@ -11,17 +11,22 @@ import com.mjcdouai.go4lunch.repository.RestaurantRepository;
 import java.util.List;
 
 public class RestaurantsViewModel extends ViewModel {
-   private final RestaurantRepository mRestaurantRepository = new RestaurantRepository();
+    private final RestaurantRepository mRestaurantRepository = RestaurantRepository.getInstance();
+    Location mLastLocation = new Location("Last location");
+    private MutableLiveData<List<Restaurant>> mLiveData;
 
-   public MutableLiveData<List<Restaurant>> loadRestaurantNearby(Location location)
-   {
-       return mRestaurantRepository.getRestaurantNearby(location);
-   }
+    public MutableLiveData<List<Restaurant>> loadRestaurantNearby(Location location) {
 
-   public MutableLiveData<Boolean> loadRestaurantDetails(int index)
-   {
-       return mRestaurantRepository.getDetails(index);
-   }
+        if (location != mLastLocation) {
+            mLiveData = mRestaurantRepository.getRestaurantNearby(location);
+            mLastLocation = location;
+        }
+        return mLiveData;
+    }
 
+    public MutableLiveData<Restaurant> loadRestaurantDetails(int index) {
+        ;
+        return mRestaurantRepository.getDetails(index);
+    }
 
 }

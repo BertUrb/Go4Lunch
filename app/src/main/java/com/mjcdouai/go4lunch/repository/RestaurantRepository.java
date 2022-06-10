@@ -25,15 +25,31 @@ public class RestaurantRepository {
     private static final String KEY = "***REMOVED***";
     private final List<Restaurant> mRestaurantList = new ArrayList<>();
 
-    public  MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location ) {
-        mCurrentLocation = location;
-        if(mLoadedLocations.contains(location))
-        {
-            return null;
+    private static volatile RestaurantRepository instance;
+
+    private RestaurantRepository() { }
+
+    public static RestaurantRepository getInstance() {
+        RestaurantRepository result = instance;
+        if (result != null) {
+            return result;
         }
-        else {
+        synchronized (UserRepository.class) {
+            if (instance == null) {
+                instance = new RestaurantRepository();
+            }
+            return instance;
+        }
+    }
+
+    public MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location) {
+        mCurrentLocation = location;
+        MutableLiveData<List<Restaurant>> mutableLiveData = new MutableLiveData<>();
+        if (mLoadedLocations.contains(location)) {
+            mutableLiveData.setValue(mRestaurantList);
+        } else {
             Call<GoogleQueryResult> call = mGoogleApi.loadRestaurantNear(location.getLatitude() + "," + location.getLongitude(), 1500, "restaurant", KEY);
-            MutableLiveData<List<Restaurant>> mutableLiveData = new MutableLiveData<>();
+
             call.enqueue(new Callback<GoogleQueryResult>() {
                 @Override
                 public void onResponse(Call<GoogleQueryResult> call, Response<GoogleQueryResult> response) {
@@ -44,6 +60,8 @@ public class RestaurantRepository {
                                 result.opening_hours.open_now,
                                 result.geometry.location.lat,
                                 result.geometry.location.lon);
+
+                        restaurant.setPhone("");
 
                         List<String> photoRefs = new ArrayList<>();
                         for (int i = 0; i < result.photos.size(); i++) {
@@ -71,40 +89,44 @@ public class RestaurantRepository {
             });
             mutableLiveData.setValue(mRestaurantList);
             mLoadedLocations.add(location);
-            return mutableLiveData;
+
         }
+        return mutableLiveData;
     }
-    public MutableLiveData<Boolean> getDetails(int index)
-    {
-        MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
-        mutableLiveData.setValue(false);
-        Call<GooglePlaceDetailsResult> call = mGoogleApi.loadRestaurantDetails(mRestaurantList.get(index).getId(),KEY);
-        call.enqueue(new Callback<GooglePlaceDetailsResult>() {
-            @Override
-            public void onResponse(Call<GooglePlaceDetailsResult> call, Response<GooglePlaceDetailsResult> response) {
 
-                String phone =  response.body().result.phone_number;
-               if(!Objects.equals(phone, ""))
-               {
-                    mRestaurantList.get(index).setPhone(phone);
-               }
+    public MutableLiveData<Restaurant> getDetails(int index) {
+        MutableLiveData<Restaurant> mutableLiveData = new MutableLiveData<>();
+        if (Objects.equals(mRestaurantList.get(index).getPhone(), "")) {
+            Call<GooglePlaceDetailsResult> call = mGoogleApi.loadRestaurantDetails(mRestaurantList.get(index).getId(), KEY);
+            call.enqueue(new Callback<GooglePlaceDetailsResult>() {
+                @Override
+                public void onResponse(Call<GooglePlaceDetailsResult> call, Response<GooglePlaceDetailsResult> response) {
 
-               String website = response.body().result.website;
-                if(!Objects.equals(website, ""))
-                {
-                    mRestaurantList.get(index).setWebsite(website);
+                    String phone = response.body().result.phone_number;
+                    if (!Objects.equals(phone, "")) {
+                        mRestaurantList.get(index).setPhone(phone);
+                    } else {
+                        mRestaurantList.get(index).setPhone("none");
+                    }
+
+                    String website = response.body().result.website;
+                    if (!Objects.equals(website, "")) {
+                        mRestaurantList.get(index).setWebsite(website);
+                    } else {
+                        mRestaurantList.get(index).setWebsite("none");
+                    }
+
                 }
-                mutableLiveData.setValue(true);
-            }
 
-            @Override
-            public void onFailure(Call<GooglePlaceDetailsResult> call, Throwable t) {
+                @Override
+                public void onFailure(Call<GooglePlaceDetailsResult> call, Throwable t) {
 
-            }
+                }
 
-        });
-
-    return mutableLiveData;
+            });
+        }
+        mutableLiveData.setValue(mRestaurantList.get(index));
+        return mutableLiveData;
     }
 
 

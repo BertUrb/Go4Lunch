@@ -8,17 +8,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mjcdouai.go4lunch.databinding.WorkmatesItemListBinding;
-import com.mjcdouai.go4lunch.model.Workmates;
+import com.mjcdouai.go4lunch.model.Workmate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantDetailsWorkmatesAdapter extends RecyclerView.Adapter<RestaurantDetailsWorkmatesViewHolder> {
 
-   private List<Workmates> mWorkmatesList;
+   private List<Workmate> mWorkmatesList;
    private WorkmatesItemListBinding mBinding;
 
-    public RestaurantDetailsWorkmatesAdapter(List<Workmates> workmatesList) {
+    public RestaurantDetailsWorkmatesAdapter(List<Workmate> workmatesList) {
         mWorkmatesList = workmatesList;
     }
 
