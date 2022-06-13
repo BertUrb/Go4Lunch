@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class WorkmatesRepository {
+
+    private static volatile WorkmatesRepository instance;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static String COLLECTION = "workmates";
 
@@ -58,6 +60,21 @@ public class WorkmatesRepository {
 
                 });
         return  mutableWorkmates;
+    }
+
+    public static WorkmatesRepository getInstance() {
+        WorkmatesRepository result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized(UserRepository.class) {
+            if (instance == null) {
+                instance = new WorkmatesRepository();
+            }
+            return instance;
+        }
+
+
     }
 
 

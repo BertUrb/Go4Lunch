@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.manager.UserManager;
 import com.mjcdouai.go4lunch.model.Workmate;
+import com.mjcdouai.go4lunch.repository.WorkmatesRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             Workmate workmate = new Workmate(user.getEmail(),user.getDisplayName(),user.getPhotoUrl().toString());
+            WorkmatesRepository workmatesRepository = WorkmatesRepository.getInstance();
+            workmatesRepository.insertWorkmate(workmate);
             startProfileActivity();
 
         } else {
