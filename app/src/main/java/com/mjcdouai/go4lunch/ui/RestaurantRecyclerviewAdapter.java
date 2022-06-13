@@ -2,6 +2,7 @@ package com.mjcdouai.go4lunch.ui;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,6 +15,7 @@ import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
 import com.mjcdouai.go4lunch.databinding.RestaurantItemListBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
+import com.mjcdouai.go4lunch.utils.LocationHelper;
 import com.mjcdouai.go4lunch.utils.RestaurantListWithMyLocation;
 
 import java.util.List;
@@ -23,13 +25,18 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
     private List<Restaurant> mRestaurantList;
     private RestaurantItemListBinding mBinding;
     private final OnClickRestaurantListener mOnClickRestaurantListener;
-    Location myLocation;
+    private Location mLocation;
 
 
-    public RestaurantRecyclerviewAdapter(List<Restaurant> restaurantList, Location location, OnClickRestaurantListener onClickRestaurantListener) {
+
+    public RestaurantRecyclerviewAdapter(List<Restaurant> restaurantList,  OnClickRestaurantListener onClickRestaurantListener) {
         mRestaurantList = restaurantList;
         mOnClickRestaurantListener = onClickRestaurantListener;
-        myLocation = location;
+
+    }
+    public void setLocation(Location location){
+        Log.d("TAG", "setLocation: " + location.toString());
+        mLocation =location;
     }
 
     @NonNull
@@ -88,11 +95,19 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
     }
 
     private String getDistanceBetweenMeAndLocation(double locationLat, double locationLon) {
+
         Location temp = new Location("temp location");
+
         temp.setLatitude(locationLat);
         temp.setLongitude(locationLon);
+        String res = "0 m";
 
-        return Math.round(myLocation.distanceTo(temp)) + " m";
+        if(mLocation != null)
+        {
+            res = Math.round(mLocation.distanceTo(temp)) + " m";
+        }
+
+        return res ;
     }
 
     @Override

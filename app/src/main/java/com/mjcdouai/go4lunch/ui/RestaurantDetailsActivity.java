@@ -25,12 +25,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDummyWorkmatesList.add(new Workmate("Nicolas Sarkozy","https://upload.wikimedia.org/wikipedia/commons/a/a6/Nicolas_Sarkozy_in_2010.jpg"));
-        mDummyWorkmatesList.add(new Workmate("Lionel Jospin","https://upload.wikimedia.org/wikipedia/commons/e/e7/Lionel_Jospin%2C_mai_2014%2C_Rennes%2C_France_%28cropped%29.jpg"));
-        mDummyWorkmatesList.add(new Workmate("Nicolas Sarkozy","https://upload.wikimedia.org/wikipedia/commons/a/a6/Nicolas_Sarkozy_in_2010.jpg"));
-        mDummyWorkmatesList.add(new Workmate("Lionel Jospin","https://upload.wikimedia.org/wikipedia/commons/e/e7/Lionel_Jospin%2C_mai_2014%2C_Rennes%2C_France_%28cropped%29.jpg"));
-        mDummyWorkmatesList.add(new Workmate("Nicolas Sarkozy","https://upload.wikimedia.org/wikipedia/commons/a/a6/Nicolas_Sarkozy_in_2010.jpg"));
-        mDummyWorkmatesList.add(new Workmate("Lionel Jospin","https://upload.wikimedia.org/wikipedia/commons/e/e7/Lionel_Jospin%2C_mai_2014%2C_Rennes%2C_France_%28cropped%29.jpg"));
+        mDummyWorkmatesList.add(new Workmate("dummy@mail.com","Nicolas Sarkozy","https://upload.wikimedia.org/wikipedia/commons/a/a6/Nicolas_Sarkozy_in_2010.jpg"));
+        mDummyWorkmatesList.add(new Workmate("dummy@mail.com","Lionel Jospin","https://upload.wikimedia.org/wikipedia/commons/e/e7/Lionel_Jospin%2C_mai_2014%2C_Rennes%2C_France_%28cropped%29.jpg"));
+        mDummyWorkmatesList.add(new Workmate("dummy@mail.com","Nicolas Sarkozy","https://upload.wikimedia.org/wikipedia/commons/a/a6/Nicolas_Sarkozy_in_2010.jpg"));
+        mDummyWorkmatesList.add(new Workmate("dummy@mail.com","Lionel Jospin","https://upload.wikimedia.org/wikipedia/commons/e/e7/Lionel_Jospin%2C_mai_2014%2C_Rennes%2C_France_%28cropped%29.jpg"));
+        mDummyWorkmatesList.add(new Workmate("dummy@mail.com","Nicolas Sarkozy","https://upload.wikimedia.org/wikipedia/commons/a/a6/Nicolas_Sarkozy_in_2010.jpg"));
+        mDummyWorkmatesList.add(new Workmate("dummy@mail.com","Lionel Jospin","https://upload.wikimedia.org/wikipedia/commons/e/e7/Lionel_Jospin%2C_mai_2014%2C_Rennes%2C_France_%28cropped%29.jpg"));
 
 
         mBinding = ActivityRestaurantDetailsBinding.inflate(getLayoutInflater());

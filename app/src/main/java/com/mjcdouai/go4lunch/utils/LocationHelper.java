@@ -19,6 +19,7 @@ public class LocationHelper implements LocationListener {
 
     private Location mLocation;
     private LocationManager mLocationManager;
+    private MutableLiveData<Location> mLocationMutableLiveData = new MutableLiveData<>();
 
     public LocationHelper(Activity host, Context context)
     {
@@ -48,13 +49,14 @@ public class LocationHelper implements LocationListener {
             mLocation.setLongitude(lg);
         }
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, (LocationListener) this);
 
 
     }
     @Override
     public void onLocationChanged(@NonNull Location location) {
         mLocation = location;
+        mLocationMutableLiveData.setValue(mLocation);
 
     }
     public Location getLocation()
@@ -62,7 +64,11 @@ public class LocationHelper implements LocationListener {
         return mLocation;
     }
 
-    public LocationManager getLocationManager() {
-        return mLocationManager;
+
+    public MutableLiveData<Location> getLocationLiveData()
+    {
+        mLocationMutableLiveData.setValue(mLocation);
+        return mLocationMutableLiveData;
+
     }
 }

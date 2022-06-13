@@ -1,10 +1,10 @@
 package com.mjcdouai.go4lunch.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -12,9 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
@@ -25,10 +26,6 @@ import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.events.DelayedMapListener;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -36,6 +33,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,8 +49,7 @@ public class MapFragment extends Fragment {
     private Location mLocation;
     private FloatingActionButton mFab;
     private FragmentMapBinding mMapBinding;
-
-
+    private List<GeoPoint> mLoadedLocations = new ArrayList<>();
 
 
     private RestaurantsViewModel mRestaurantsViewModel;
@@ -87,13 +84,15 @@ public class MapFragment extends Fragment {
 
         Context ctx = getActivity();
 
-        mLocationHelper = new LocationHelper(this.getActivity(),getContext());
-        mLocation=  mLocationHelper.getLocation();
+        mLocationHelper = new LocationHelper(this.getActivity(), getContext());
+
+        mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(),this::locationObserver);
+        mLocation = mLocationHelper.getLocation();
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
-        mMapBinding = FragmentMapBinding.inflate(inflater,container,false);
+        mMapBinding = FragmentMapBinding.inflate(inflater, container, false);
 
         View view = mMapBinding.getRoot();
 
@@ -102,6 +101,7 @@ public class MapFragment extends Fragment {
         mMap.setTileSource(TileSourceFactory.MAPNIK);
         mMap.setMultiTouchControls(true);
 
+
         MyLocationNewOverlay locationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), mMap);
         locationNewOverlay.enableMyLocation();
         mMap.getOverlays().add(locationNewOverlay);
@@ -109,21 +109,37 @@ public class MapFragment extends Fragment {
         mMapController = mMap.getController();
         mMapController.setZoom(15.0);
 
+
+
         mMapController.setCenter(startPosition);
 
 
-              mFab = mMapBinding.fabCenterView;
+        mFab = mMapBinding.fabCenterView;
         mFab.setOnClickListener(this::onFabClick);
 
         return view;
     }
 
+    private void locationObserver(Location location) {
+        mLocation = location;
+        GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
-    public void getRestaurantObserver(List<Restaurant> restaurantList)
-    {
-        for (Restaurant restaurant: restaurantList) {
-            addMarker(restaurant);
+        if(!mLoadedLocations.contains(geoPoint)) {
 
+            mLoadedLocations.add(geoPoint);
+            mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+
+        }
+    }
+
+
+    public void getRestaurantObserver(List<Restaurant> restaurantList) {
+        if(restaurantList.size() != 0) {
+            for (Restaurant restaurant : restaurantList) {
+                addMarker(restaurant);
+            }
+        }else {
+            mLoadedLocations.remove(new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude()));
         }
 
     }
@@ -131,27 +147,26 @@ public class MapFragment extends Fragment {
 
     void addMarker(Restaurant restaurant) {
 
-            Log.d("TAG", "addMarker: " + restaurant.getName());
-            Marker marker = new Marker(mMap);
-            marker.setPosition(new GeoPoint(restaurant.getLatitude(), restaurant.getLongitude()));
-            marker.setTitle(restaurant.getName());
-            marker.setSubDescription(restaurant.getAddress());
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.showInfoWindow();
-            Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
-            marker.setIcon(d);
-            mMap.getOverlays().add(marker);
 
-            mMap.invalidate();
+        Marker marker = new Marker(mMap);
+        marker.setPosition(new GeoPoint(restaurant.getLatitude(), restaurant.getLongitude()));
+        marker.setTitle(restaurant.getName());
+        marker.setSubDescription(restaurant.getAddress());
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.showInfoWindow();
+        Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
+        marker.setIcon(d);
+        mMap.getOverlays().add(marker);
+
+        mMap.invalidate();
 
     }
 
 
     private void onFabClick(View v) {
-        mLocation = mLocationHelper.getLocation();
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+       // mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
     }
 
 }

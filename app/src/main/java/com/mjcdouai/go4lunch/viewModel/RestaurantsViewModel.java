@@ -1,6 +1,7 @@
 package com.mjcdouai.go4lunch.viewModel;
 
 import android.location.Location;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -17,7 +18,7 @@ public class RestaurantsViewModel extends ViewModel {
 
     public MutableLiveData<List<Restaurant>> loadRestaurantNearby(Location location) {
 
-        if (location != mLastLocation) {
+        if (location.getLatitude() != mLastLocation.getLatitude() &&  location.getLongitude() != mLastLocation.getLongitude()) {
             mLiveData = mRestaurantRepository.getRestaurantNearby(location);
             mLastLocation = location;
         }

@@ -19,15 +19,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RestaurantRepository {
-    private Location mCurrentLocation;
-    private List<Location> mLoadedLocations = new ArrayList<>();
     private final GoogleApi mGoogleApi = GoogleApi.retrofit.create(GoogleApi.class);
     private static final String KEY = "***REMOVED***";
     private final List<Restaurant> mRestaurantList = new ArrayList<>();
+    MutableLiveData<List<Restaurant>> mutableLiveData = new MutableLiveData<>();
 
     private static volatile RestaurantRepository instance;
 
-    private RestaurantRepository() { }
+    private RestaurantRepository() {
+    }
 
     public static RestaurantRepository getInstance() {
         RestaurantRepository result = instance;
@@ -43,54 +43,53 @@ public class RestaurantRepository {
     }
 
     public MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location) {
-        mCurrentLocation = location;
-        MutableLiveData<List<Restaurant>> mutableLiveData = new MutableLiveData<>();
-        if (mLoadedLocations.contains(location)) {
-            mutableLiveData.setValue(mRestaurantList);
-        } else {
-            Call<GoogleQueryResult> call = mGoogleApi.loadRestaurantNear(location.getLatitude() + "," + location.getLongitude(), 1500, "restaurant", KEY);
-
-            call.enqueue(new Callback<GoogleQueryResult>() {
-                @Override
-                public void onResponse(Call<GoogleQueryResult> call, Response<GoogleQueryResult> response) {
-                    for (GoogleQueryResult.Result result : response.body().results) {
-                        Restaurant restaurant = new Restaurant(result.place_id,
-                                result.name,
-                                result.address,
-                                result.opening_hours.open_now,
-                                result.geometry.location.lat,
-                                result.geometry.location.lon);
-
-                        restaurant.setPhone("");
-
-                        List<String> photoRefs = new ArrayList<>();
-                        for (int i = 0; i < result.photos.size(); i++) {
-                            photoRefs.add(result.photos.get(i).mPhotoReference);
-                        }
 
 
-                        restaurant.setPhotoReferences(photoRefs);
-                        restaurant.setRating(result.rating);
 
 
-                        mRestaurantList.add(restaurant);
+        Call<GoogleQueryResult> call = mGoogleApi.loadRestaurantNear(location.getLatitude() + "," + location.getLongitude(), 1500, "restaurant", KEY);
+
+        call.enqueue(new Callback<GoogleQueryResult>() {
+            @Override
+            public void onResponse(Call<GoogleQueryResult> call, Response<GoogleQueryResult> response) {
+                Log.d("TAG", "onResponse: API");
+                mRestaurantList.clear();
+                for (GoogleQueryResult.Result result : response.body().results) {
+                    Restaurant restaurant = new Restaurant(result.place_id,
+                            result.name,
+                            result.address,
+                            result.opening_hours.open_now,
+                            result.geometry.location.lat,
+                            result.geometry.location.lon);
+
+                    restaurant.setPhone("");
+
+                    List<String> photoRefs = new ArrayList<>();
+                    for (int i = 0; i < result.photos.size(); i++) {
+                        photoRefs.add(result.photos.get(i).mPhotoReference);
                     }
 
+                    restaurant.setPhotoReferences(photoRefs);
+                    restaurant.setRating(result.rating);
 
+                    mRestaurantList.add(restaurant);
                 }
+                mutableLiveData.setValue(mRestaurantList);
 
-                @Override
-                public void onFailure(Call call, Throwable t) {
-                    Log.d("TAG", "onFailure: FAIL");
-                    Log.getStackTraceString(t);
 
-                }
+            }
 
-            });
-            mutableLiveData.setValue(mRestaurantList);
-            mLoadedLocations.add(location);
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.d("TAG", "onFailure: FAIL");
+                Log.getStackTraceString(t);
 
-        }
+            }
+
+        });
+
+
+
         return mutableLiveData;
     }
 

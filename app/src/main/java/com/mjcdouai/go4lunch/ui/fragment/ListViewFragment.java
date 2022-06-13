@@ -3,6 +3,7 @@ package com.mjcdouai.go4lunch.ui.fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
 import com.mjcdouai.go4lunch.ui.RestaurantRecyclerviewAdapter;
 import com.mjcdouai.go4lunch.utils.LocationHelper;
-import com.mjcdouai.go4lunch.utils.RestaurantListWithMyLocation;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import java.util.List;
@@ -32,6 +32,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
     private List<Restaurant> mRestaurantList;
     private LocationHelper mLocationHelper;
     private Location mLocation;
+    private RestaurantRecyclerviewAdapter mRestaurantRecyclerviewAdapter;
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -57,12 +58,23 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         View view = mBinding.getRoot();
         mLocationHelper = new LocationHelper(getActivity(), getContext());
         mLocation = mLocationHelper.getLocation();
+
         OnClickRestaurantListener listener = this;
 
         mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), restaurants -> {
             mRestaurantList = restaurants;
-            mBinding.recyclerview.setAdapter(new RestaurantRecyclerviewAdapter(
-                    mRestaurantList, mLocation, listener));
+            mRestaurantRecyclerviewAdapter = new RestaurantRecyclerviewAdapter(
+                    mRestaurantList, listener);
+            mBinding.recyclerview.setAdapter(mRestaurantRecyclerviewAdapter);
+        });
+
+        mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), location -> {
+            Log.d("TAG", "onLocationChanged: ");
+            if(mRestaurantRecyclerviewAdapter != null) {
+                mRestaurantRecyclerviewAdapter.setLocation(location);
+            }
+            mLocation = location;
+
         });
         return view;
     }

@@ -1,6 +1,11 @@
 package com.mjcdouai.go4lunch.model;
 
 public class Workmate {
+    public String getMail() {
+        return mMail;
+    }
+
+    private final String mMail;
     private final String mName;
     private final String mPhotoUrl;
     private String mChosenRestaurantId;
@@ -21,8 +26,10 @@ public class Workmate {
         mChosenRestaurantId = chosenRestaurantId;
     }
 
-    public Workmate(String name, String photoUrl) {
-        mName = name;
+    public Workmate(String mail, String name, String photoUrl) {
+
+       mMail=mail;
+       mName = name;
         mPhotoUrl = photoUrl;
     }
 }
