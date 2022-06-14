@@ -19,10 +19,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
+        app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="@id/restaurant_image"
         app:layout_constraintEnd_toEndOf="@id/restaurant_image"
         app:layout_constraintTop_toBottomOf="@id/restaurant_image"
-        app:srcCompat="@drawable/ic_baseline_check_circle_outline_24" />
+        app:srcCompat="@drawable/ic_baseline_check_circle_outline_24"
+
+        />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"

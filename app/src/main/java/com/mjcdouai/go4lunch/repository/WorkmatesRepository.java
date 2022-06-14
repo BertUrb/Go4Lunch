@@ -28,7 +28,7 @@ public class WorkmatesRepository {
         workmateMap.put("name", workmate.getName());
         workmateMap.put("photoUrl", workmate.getPhotoUrl());
         workmateMap.put("chosenRestaurantId", workmate.getChosenRestaurantId());
-        workmateMap.put("date", date);
+        workmateMap.put("date", date.toString());
 
         db.collection(COLLECTION).document(workmate.getMail()).set(workmateMap).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
@@ -46,7 +46,7 @@ public class WorkmatesRepository {
         LocalDate date = LocalDate.now();
 
         db.collection(COLLECTION).whereEqualTo("chosenRestaurantId",restaurantId)
-                .whereEqualTo("date",date)
+                .whereEqualTo("date",date.toString())
                 .get()
                 .addOnCompleteListener(task -> {
                     for(QueryDocumentSnapshot document : task.getResult())
