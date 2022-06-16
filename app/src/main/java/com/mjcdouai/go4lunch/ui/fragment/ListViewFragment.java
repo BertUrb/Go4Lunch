@@ -9,15 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
 import com.mjcdouai.go4lunch.databinding.FragmentListViewBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
+import com.mjcdouai.go4lunch.repository.WorkmatesRepository;
 import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
 import com.mjcdouai.go4lunch.ui.RestaurantRecyclerviewAdapter;
 import com.mjcdouai.go4lunch.utils.LocationHelper;
+import com.mjcdouai.go4lunch.utils.WorkmateWithRestaurantName;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
+import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,9 +36,11 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
     private FragmentListViewBinding mBinding;
     private RestaurantsViewModel mRestaurantsViewModel;
     private List<Restaurant> mRestaurantList;
+    private List<String> mChosenRestaurantIds;
     private LocationHelper mLocationHelper;
     private Location mLocation;
     private RestaurantRecyclerviewAdapter mRestaurantRecyclerviewAdapter;
+    private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -60,11 +68,21 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         mLocation = mLocationHelper.getLocation();
 
         OnClickRestaurantListener listener = this;
+        mChosenRestaurantIds = new ArrayList<>();
+
+        mWorkmatesViewModel.getWorkmatesWithRestaurantsNames().observe(getViewLifecycleOwner(), workmateWithRestaurantNames -> {
+            for(WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames ) {
+                mChosenRestaurantIds.add(workmateWithRestaurantName.mWorkmate.getChosenRestaurantId());
+            }
+        } );
+
 
         mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), restaurants -> {
             mRestaurantList = restaurants;
+
+
             mRestaurantRecyclerviewAdapter = new RestaurantRecyclerviewAdapter(
-                    mRestaurantList, listener);
+                    mRestaurantList,mChosenRestaurantIds, listener);
             mBinding.recyclerview.setAdapter(mRestaurantRecyclerviewAdapter);
         });
 
@@ -88,8 +106,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
             startActivity(restaurantDetails);
         });
     }
+
+
 }
-
-
-
 

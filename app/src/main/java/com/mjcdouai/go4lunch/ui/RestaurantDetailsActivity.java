@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import com.mjcdouai.go4lunch.manager.UserManager;
 import android.util.Log;
 import android.view.View;
 
@@ -20,6 +21,7 @@ import com.mjcdouai.go4lunch.model.Workmate;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.repository.UserRepository;
 import com.mjcdouai.go4lunch.repository.WorkmatesRepository;
+import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private ActivityRestaurantDetailsBinding mBinding;
     private Workmate mWorkmate;
     private List<Workmate> mWorkmates = new ArrayList<>();
+    private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,17 +97,17 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
         mBinding.restaurantStars.setText(stars);
 
-        WorkmatesRepository workmatesRepository = WorkmatesRepository.getInstance();
-        workmatesRepository.getWorkmateInThis(restaurant.getId()).observe(this,
+
+        mWorkmatesViewModel.getWorkmateInThis(restaurant.getId()).observe(this,
                 workmates -> {
                     mBinding.joiningWorkmates.setAdapter(new RestaurantDetailsWorkmatesAdapter(workmates));
                     mWorkmates = workmates;
 
-                    UserRepository userRepository = UserRepository.getInstance();
+                    UserManager userManager = UserManager.getInstance();
 
-                    mWorkmate = new Workmate(userRepository.getCurrentUser().getEmail(),
-                            userRepository.getCurrentUser().getDisplayName(),
-                            userRepository.getCurrentUser().getPhotoUrl().toString());
+                    mWorkmate = new Workmate(userManager.getCurrentUser().getEmail(),
+                            userManager.getCurrentUser().getDisplayName(),
+                            userManager.getCurrentUser().getPhotoUrl().toString());
 
                     for(Workmate workmate: mWorkmates)
                     {
@@ -133,13 +136,15 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             if (Objects.equals(mWorkmate.getChosenRestaurantId(), restaurant.getId())) {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_outline_24);
                 mWorkmate.setChosenRestaurantId("");
+                mWorkmatesViewModel.insertWorkmate(mWorkmate,getResources().getString(R.string.not_decided));
                 Log.d("TAG", "onCreate: vide");
             } else {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_24);;
                 mWorkmate.setChosenRestaurantId(restaurant.getId());
-                Log.d("TAG", "onCreate: plein");
+                mWorkmatesViewModel.insertWorkmate(mWorkmate,restaurant.getName());
+                Log.d("TAG", "onCreate: plein " + restaurant.getName());
             }
-            workmatesRepository.insertWorkmate(mWorkmate);
+
         });
     }
 }

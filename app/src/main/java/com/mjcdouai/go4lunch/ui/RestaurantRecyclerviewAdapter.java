@@ -15,23 +15,25 @@ import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
 import com.mjcdouai.go4lunch.databinding.RestaurantItemListBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
-import com.mjcdouai.go4lunch.utils.LocationHelper;
-import com.mjcdouai.go4lunch.utils.RestaurantListWithMyLocation;
 
+
+import java.util.Collections;
 import java.util.List;
 
 public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<RestaurantViewHolder> {
 
-    private List<Restaurant> mRestaurantList;
+    private final List<Restaurant> mRestaurantList;
     private RestaurantItemListBinding mBinding;
     private final OnClickRestaurantListener mOnClickRestaurantListener;
     private Location mLocation;
+    private final List<String> mChosenRestaurantIds;
 
 
 
-    public RestaurantRecyclerviewAdapter(List<Restaurant> restaurantList,  OnClickRestaurantListener onClickRestaurantListener) {
+    public RestaurantRecyclerviewAdapter(List<Restaurant> restaurantList, List<String> chosenRestaurantIds, OnClickRestaurantListener onClickRestaurantListener) {
         mRestaurantList = restaurantList;
         mOnClickRestaurantListener = onClickRestaurantListener;
+        mChosenRestaurantIds = chosenRestaurantIds;
 
     }
     public void setLocation(Location location){
@@ -89,6 +91,7 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
         }
 
         holder.getStars().setText(stars);
+        holder.getWorkmatesCount().setText(getWorkmateCountIn(mRestaurantList.get(position).getId()));
 
         holder.getDistance().setText(getDistanceBetweenMeAndLocation(mRestaurantList.get(position).getLatitude(), mRestaurantList.get(position).getLongitude()));
 
@@ -113,5 +116,10 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
     @Override
     public int getItemCount() {
         return mRestaurantList.size();
+    }
+
+    public String getWorkmateCountIn(String restaurantId)
+    {
+        return "(" + Collections.frequency(mChosenRestaurantIds,restaurantId) + ")";
     }
 }

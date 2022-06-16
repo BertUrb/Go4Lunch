@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             Workmate workmate = new Workmate(user.getEmail(),user.getDisplayName(),user.getPhotoUrl().toString());
             WorkmatesRepository workmatesRepository = WorkmatesRepository.getInstance();
-            workmatesRepository.insertWorkmate(workmate);
+            workmatesRepository.insertWorkmate(workmate,getResources().getString(R.string.not_decided));
             startProfileActivity();
 
         } else {

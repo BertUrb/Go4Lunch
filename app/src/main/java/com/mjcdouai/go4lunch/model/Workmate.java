@@ -10,6 +10,16 @@ public class Workmate {
     private final String mPhotoUrl;
     private String mChosenRestaurantId;
 
+    public String getDate() {
+        return mDate;
+    }
+
+    public void setDate(String date) {
+        mDate = date;
+    }
+
+    private String mDate;
+
     public String getName() {
         return mName;
     }
