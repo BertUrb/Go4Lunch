@@ -9,6 +9,7 @@ import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.remote.GooglePlaceDetailsResult;
 import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
+import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,32 @@ public class RestaurantRepository {
     private static volatile RestaurantRepository instance;
 
     private RestaurantRepository() {
+    }
+    public void likeRestaurant(Restaurant restaurant)
+    {
+        for(int i=0; i< mRestaurantList.size();i++ )
+        {
+            if(Objects.equals(mRestaurantList.get(i).getId(), restaurant.getId()))
+            {
+                mRestaurantList.get(i).setLiked(true);
+                Log.d("TAG", "likeRestaurant: ");
+            }
+
+        }
+        //mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
+    }
+    public void unlikeRestaurant(Restaurant restaurant)
+    {
+        for(int i=0; i< mRestaurantList.size();i++ )
+        {
+            if(Objects.equals(mRestaurantList.get(i).getId(), restaurant.getId()))
+            {
+                mRestaurantList.get(i).setLiked(false);
+                Log.d("TAG", "unlikeRestaurant: ");
+            }
+
+        }
+        mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(false);
     }
 
     public static RestaurantRepository getInstance() {
@@ -72,6 +99,9 @@ public class RestaurantRepository {
                     restaurant.setPhotoReferences(photoRefs);
                     restaurant.setRating(result.rating);
 
+                    restaurant.setLiked(WorkmatesRepository.getInstance().isFavoriteRestaurant(restaurant.getId()));
+                    Log.d("TAG", "LIKED ?  " + restaurant.isLiked());
+
                     mRestaurantList.add(restaurant);
                 }
                 mutableLiveData.setValue(mRestaurantList);
@@ -115,6 +145,7 @@ public class RestaurantRepository {
                         mRestaurantList.get(index).setWebsite("none");
                     }
 
+
                 }
 
                 @Override
@@ -127,6 +158,5 @@ public class RestaurantRepository {
         mutableLiveData.setValue(mRestaurantList.get(index));
         return mutableLiveData;
     }
-
 
 }

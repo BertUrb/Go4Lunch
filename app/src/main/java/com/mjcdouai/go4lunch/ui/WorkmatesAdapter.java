@@ -42,7 +42,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder>{
         String text = mWorkmatesWithRestaurants.get(position).mWorkmate.getName() + " ";
         LocalDate date = LocalDate.now();
 
-        if(mWorkmatesWithRestaurants.get(position).mWorkmate.getDate() != date.toString()){
+        if(!Objects.equals(mWorkmatesWithRestaurants.get(position).mWorkmate.getDate(), date.toString())){
             mWorkmatesWithRestaurants.get(position).mRestaurantName =  mBinding.getRoot().getResources().getString(R.string.not_decided);
         }
 

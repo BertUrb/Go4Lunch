@@ -1,26 +1,20 @@
 package com.mjcdouai.go4lunch.ui;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import com.mjcdouai.go4lunch.manager.UserManager;
 import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 
 import com.bumptech.glide.Glide;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivityRestaurantDetailsBinding;
+import com.mjcdouai.go4lunch.manager.UserManager;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.model.Workmate;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
-import com.mjcdouai.go4lunch.repository.UserRepository;
-import com.mjcdouai.go4lunch.repository.WorkmatesRepository;
 import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
 import java.util.ArrayList;
@@ -64,6 +58,28 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         } else {
             mBinding.callBtn.setEnabled(false);
         }
+
+        Log.d("TAG", "onCreate: " + restaurant.isLiked());
+        if(restaurant.isLiked())
+        {
+            mBinding.starBtn.setBackgroundColor(Color.YELLOW);
+        }
+
+        mBinding.starBtn.setOnClickListener(view ->  {
+
+            if(!restaurant.isLiked()) {
+                mWorkmatesViewModel.addFavoriteRestaurant(restaurant);
+                mBinding.starBtn.setBackgroundColor(Color.YELLOW);
+                restaurant.setLiked(true);
+
+            }
+            else {
+                mWorkmatesViewModel.removeFavoriteRestaurant(restaurant);
+                mBinding.starBtn.setBackgroundColor(Color.TRANSPARENT);
+                restaurant.setLiked(false);
+            }
+
+        });
 
         if (!Objects.equals(restaurant.getWebsite(), null) && !Objects.equals(restaurant.getWebsite(), "none")) {
             mBinding.webBtn.setOnClickListener(view -> {
@@ -114,15 +130,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                         if(Objects.equals(workmate.getMail(), mWorkmate.getMail()))
                         {
                             mWorkmate.setChosenRestaurantId(restaurant.getId());
-                            Log.d("TAG", "onCreate: equals");
                         }
                     }
-                    Log.d("TAG", "onCreate: mWorkmate " + mWorkmate.getChosenRestaurantId());
-                    Log.d("TAG", "onCreate: resto" + restaurant.getId());
                     if (Objects.equals(mWorkmate.getChosenRestaurantId(), restaurant.getId())) {
 
                         mBinding.joinFab.setImageResource(R.drawable.green_check_circle_24);
-                        Log.d("TAG", "onCreate: equals2");
                     } else {
                         mBinding.joinFab.setImageResource(R.drawable.green_check_circle_outline_24);
                     }
@@ -137,12 +149,10 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_outline_24);
                 mWorkmate.setChosenRestaurantId("");
                 mWorkmatesViewModel.insertWorkmate(mWorkmate,getResources().getString(R.string.not_decided));
-                Log.d("TAG", "onCreate: vide");
             } else {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_24);;
                 mWorkmate.setChosenRestaurantId(restaurant.getId());
                 mWorkmatesViewModel.insertWorkmate(mWorkmate,restaurant.getName());
-                Log.d("TAG", "onCreate: plein " + restaurant.getName());
             }
 
         });

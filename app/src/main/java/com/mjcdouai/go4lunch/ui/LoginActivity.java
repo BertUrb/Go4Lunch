@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
             Workmate workmate = new Workmate(user.getEmail(),user.getDisplayName(),user.getPhotoUrl().toString());
             WorkmatesRepository workmatesRepository = WorkmatesRepository.getInstance();
             workmatesRepository.insertWorkmate(workmate,getResources().getString(R.string.not_decided));
+            workmatesRepository.initFavRestaurantList();
             startProfileActivity();
 
         } else {
@@ -65,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(mUserManager.isCurrentUserLogged())
         {
+            WorkmatesRepository.getInstance().initFavRestaurantList();
             startProfileActivity();
         }
         else

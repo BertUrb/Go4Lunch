@@ -13,6 +13,7 @@ import java.util.List;
 
 public class RestaurantsViewModel extends ViewModel {
     private final RestaurantRepository mRestaurantRepository = RestaurantRepository.getInstance();
+    private static volatile  RestaurantsViewModel instance;
     Location mLastLocation = new Location("Last location");
     private MutableLiveData<List<Restaurant>> mLiveData;
 
@@ -26,8 +27,34 @@ public class RestaurantsViewModel extends ViewModel {
     }
 
     public MutableLiveData<Restaurant> loadRestaurantDetails(int index) {
-        ;
+
         return mRestaurantRepository.getDetails(index);
     }
+
+    public void likeRestaurant(Restaurant restaurant)
+    {
+        mRestaurantRepository.likeRestaurant(restaurant);
+    }
+
+    public void unlikeRestaurant(Restaurant restaurant) {
+        mRestaurantRepository.unlikeRestaurant(restaurant);
+    }
+
+    public static RestaurantsViewModel getInstance() {
+        RestaurantsViewModel result = instance;
+
+        if(result != null)
+        {
+            return result;
+        }
+        synchronized (WorkmatesViewModel.class){
+            if(instance == null)
+            {
+                instance = new RestaurantsViewModel();
+            }
+            return instance;
+        }
+    }
+
 
 }

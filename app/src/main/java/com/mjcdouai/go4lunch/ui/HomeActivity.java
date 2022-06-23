@@ -29,7 +29,12 @@ import com.mjcdouai.go4lunch.ui.fragment.MapFragment;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.ui.fragment.WorkmatesFragment;
 import com.mjcdouai.go4lunch.manager.UserManager;
+import com.mjcdouai.go4lunch.utils.WorkmateWithRestaurantName;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
+import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -45,33 +50,45 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private RestaurantsViewModel mRestaurantsViewModel;
 
+
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private UserManager mUserManager = UserManager.getInstance();
+    private final UserManager mUserManager = UserManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
-        mRestaurantsViewModel = new ViewModelProvider(this).get(RestaurantsViewModel.class);
-        mMapFragment = MapFragment.newInstance(mRestaurantsViewModel);
-        mActive = mMapFragment;
-        mListViewFragment = ListViewFragment.newInstance(mRestaurantsViewModel);
-        setContentView(mHomeBinding.getRoot());
+        List<String> chosenRestaurantIds = new ArrayList<>();
 
-        mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
-        mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
-        mFragmentManager.beginTransaction().add(R.id.main_content,mMapFragment, "1").commit();
+        WorkmatesViewModel workmatesViewModel = WorkmatesViewModel.getInstance();
+        workmatesViewModel.getWorkmatesWithRestaurantsNames().observe(this, workmateWithRestaurantNames -> {
+            for(WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames ) {
+                chosenRestaurantIds.add(workmateWithRestaurantName.mWorkmate.getChosenRestaurantId());
 
-        configureToolbar();
-        configureDrawerLayout();
-        configureNavigationView();
-        updateUserInfo();
+            }
+            mHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
+            mRestaurantsViewModel = RestaurantsViewModel.getInstance();
+            mMapFragment = MapFragment.newInstance(mRestaurantsViewModel,chosenRestaurantIds);
+            mActive = mMapFragment;
+            mListViewFragment = ListViewFragment.newInstance(mRestaurantsViewModel);
+            setContentView(mHomeBinding.getRoot());
 
-        BottomNavigationView navigation = mHomeBinding.mainBottomNavigation;
-        navigation.setOnItemSelectedListener(this::onNavigationItemSelected);
+            mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
+            mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
+            mFragmentManager.beginTransaction().add(R.id.main_content,mMapFragment, "1").commit();
+
+            configureToolbar();
+            configureDrawerLayout();
+            configureNavigationView();
+            updateUserInfo();
+
+            BottomNavigationView navigation = mHomeBinding.mainBottomNavigation;
+            navigation.setOnItemSelectedListener(this::onNavigationItemSelected);
+        } );
+
+
     }
 
     @Override

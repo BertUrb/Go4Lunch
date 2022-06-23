@@ -1,26 +1,25 @@
 package com.mjcdouai.go4lunch.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
+import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
 import com.mjcdouai.go4lunch.utils.LocationHelper;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
@@ -34,22 +33,23 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements Marker.OnMarkerClickListener {
 
     private MapView mMap;
     private IMapController mMapController;
     private LocationHelper mLocationHelper;
     private Location mLocation;
-    private FloatingActionButton mFab;
-    private FragmentMapBinding mMapBinding;
     private List<GeoPoint> mLoadedLocations = new ArrayList<>();
+    private static List<String> mChosenRestaurantIds;
 
 
     private RestaurantsViewModel mRestaurantsViewModel;
@@ -65,9 +65,10 @@ public class MapFragment extends Fragment {
      *
      * @return A new instance of fragment MapFragment.
      */
-    public static MapFragment newInstance(RestaurantsViewModel restaurantsViewModel) {
+    public static MapFragment newInstance(RestaurantsViewModel restaurantsViewModel, List<String> chosenRestaurantIds) {
         MapFragment mapFragment = new MapFragment();
         mapFragment.mRestaurantsViewModel = restaurantsViewModel;
+        mChosenRestaurantIds = chosenRestaurantIds;
 
         return mapFragment;
     }
@@ -86,18 +87,18 @@ public class MapFragment extends Fragment {
 
         mLocationHelper = new LocationHelper(this.getActivity(), getContext());
 
-        mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(),this::locationObserver);
+        mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), this::locationObserver);
         mLocation = mLocationHelper.getLocation();
         mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
-        mMapBinding = FragmentMapBinding.inflate(inflater, container, false);
+        com.mjcdouai.go4lunch.databinding.FragmentMapBinding mapBinding = FragmentMapBinding.inflate(inflater, container, false);
 
-        View view = mMapBinding.getRoot();
+        View view = mapBinding.getRoot();
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        mMap = mMapBinding.map;
+        mMap = mapBinding.map;
         mMap.setTileSource(TileSourceFactory.MAPNIK);
         mMap.setMultiTouchControls(true);
 
@@ -109,22 +110,27 @@ public class MapFragment extends Fragment {
         mMapController = mMap.getController();
         mMapController.setZoom(15.0);
 
+        createChosenRestaurantList();
 
 
         mMapController.setCenter(startPosition);
 
 
-        mFab = mMapBinding.fabCenterView;
-        mFab.setOnClickListener(this::onFabClick);
+        FloatingActionButton fab = mapBinding.fabCenterView;
+        fab.setOnClickListener(this::onFabClick);
 
         return view;
+    }
+
+    private void createChosenRestaurantList() {
+
     }
 
     private void locationObserver(Location location) {
         mLocation = location;
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
-        if(!mLoadedLocations.contains(geoPoint)) {
+        if (!mLoadedLocations.contains(geoPoint)) {
 
             mLoadedLocations.add(geoPoint);
             mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
@@ -134,39 +140,78 @@ public class MapFragment extends Fragment {
 
 
     public void getRestaurantObserver(List<Restaurant> restaurantList) {
-        if(restaurantList.size() != 0) {
+        int index = 0;
+        mMap.getOverlays().clear();
+        if (restaurantList.size() != 0) {
             for (Restaurant restaurant : restaurantList) {
-                addMarker(restaurant);
+
+                addMarker(restaurant,index);
+                index++;
             }
-        }else {
+        } else {
             mLoadedLocations.remove(new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude()));
         }
 
     }
 
+    public int getWorkmateCountIn(String restaurantId) {
+        return Collections.frequency(mChosenRestaurantIds, restaurantId);
+    }
 
-    void addMarker(Restaurant restaurant) {
 
+    void addMarker(Restaurant restaurant,int index) {
 
-        Marker marker = new Marker(mMap);
+        String id = ""+ index;
+        MyMarker marker = new MyMarker(mMap);
         marker.setPosition(new GeoPoint(restaurant.getLatitude(), restaurant.getLongitude()));
         marker.setTitle(restaurant.getName());
         marker.setSubDescription(restaurant.getAddress());
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.showInfoWindow();
+        marker.setId(id);
+        marker.setOnMarkerClickListener(this);
+
+
         Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
+        if (getWorkmateCountIn(restaurant.getId()) > 0) {
+            Objects.requireNonNull(d).setTint(Color.GREEN);
+        } else {
+            Objects.requireNonNull(d).setTint(Color.RED);
+        }
         marker.setIcon(d);
         mMap.getOverlays().add(marker);
-
-        mMap.invalidate();
-
     }
 
 
     private void onFabClick(View v) {
         GeoPoint geoPoint = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
         mMapController.animateTo(geoPoint);
-       // mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+        // mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
     }
 
+
+    @Override
+    public boolean onMarkerClick(Marker marker, MapView mapView) {
+        int id = Integer.parseInt(marker.getId());
+        Intent restaurantDetails = new Intent(getContext(), RestaurantDetailsActivity.class);
+        mRestaurantsViewModel.loadRestaurantDetails(id).observe(getViewLifecycleOwner(), restaurant -> {
+            restaurantDetails.putExtra("Restaurant", restaurant);
+            startActivity(restaurantDetails);
+        });
+        return false;
+    }
+
+    private static class MyMarker extends Marker {
+
+        public MyMarker(MapView mapView) {
+            super(mapView);
+        }
+
+        @Override
+        public boolean onLongPress(MotionEvent event, MapView mapView) {
+            showInfoWindow();
+            return super.onLongPress(event, mapView);
+
+
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.mjcdouai.go4lunch.viewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.model.Workmate;
 import com.mjcdouai.go4lunch.repository.WorkmatesRepository;
 import com.mjcdouai.go4lunch.utils.WorkmateWithRestaurantName;
@@ -31,6 +32,11 @@ public class WorkmatesViewModel extends ViewModel {
         mWorkmatesRepository.insertWorkmate(workmate,restaurantName);
     }
 
+    public void addFavoriteRestaurant(Restaurant restaurant)
+    {
+        mWorkmatesRepository.addFavoriteRestaurant(restaurant);
+    }
+
     public static WorkmatesViewModel getInstance() {
         WorkmatesViewModel result = instance;
 
@@ -47,4 +53,11 @@ public class WorkmatesViewModel extends ViewModel {
         }
     }
 
+    public void removeFavoriteRestaurant(Restaurant restaurant) {
+        mWorkmatesRepository.removeFavoriteRestaurant(restaurant);
+    }
+
+    public boolean isFavoriteRestaurant(String restaurantId) {
+       return mWorkmatesRepository.isFavoriteRestaurant(restaurantId);
+    }
 }
