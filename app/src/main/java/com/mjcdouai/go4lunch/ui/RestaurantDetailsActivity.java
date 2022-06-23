@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.mjcdouai.go4lunch.BuildConfig;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivityRestaurantDetailsBinding;
 import com.mjcdouai.go4lunch.manager.UserManager;
@@ -40,7 +41,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         Restaurant restaurant = intent.getParcelableExtra("Restaurant");
 
         if (restaurant.getPhotoReferences().size() > 0) {
-            String url = GoogleApi.getImageUrl(restaurant.getPhotoReferences().get(0));
+            String url = GoogleApi.getImageUrl(restaurant.getPhotoReferences().get(0),BuildConfig.GMAP_API_KEY);
 
             Glide.with(mBinding.getRoot().getContext())
                     .load(url)

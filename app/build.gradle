@@ -20,6 +20,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String","GMAP_API_KEY", myGmapApiKey)
+        }
+        debug {
+            buildConfigField("String","GMAP_API_KEY", myGmapApiKey)
         }
     }
     compileOptions {

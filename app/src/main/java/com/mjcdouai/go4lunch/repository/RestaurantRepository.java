@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.mjcdouai.go4lunch.BuildConfig;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.remote.GooglePlaceDetailsResult;
@@ -21,7 +22,7 @@ import retrofit2.Response;
 
 public class RestaurantRepository {
     private final GoogleApi mGoogleApi = GoogleApi.retrofit.create(GoogleApi.class);
-    private static final String KEY = "***REMOVED***";
+    private static final String KEY = BuildConfig.GMAP_API_KEY;
     private final List<Restaurant> mRestaurantList = new ArrayList<>();
     MutableLiveData<List<Restaurant>> mutableLiveData = new MutableLiveData<>();
 

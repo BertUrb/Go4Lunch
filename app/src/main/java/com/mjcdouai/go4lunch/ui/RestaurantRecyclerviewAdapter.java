@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.mjcdouai.go4lunch.BuildConfig;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
 import com.mjcdouai.go4lunch.databinding.RestaurantItemListBinding;
@@ -57,7 +58,7 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
 
 
         if (mRestaurantList.get(position).getPhotoReferences().size() > 0) {
-            String url = GoogleApi.getImageUrl(mRestaurantList.get(position).getPhotoReferences().get(0));
+            String url = GoogleApi.getImageUrl(mRestaurantList.get(position).getPhotoReferences().get(0), BuildConfig.GMAP_API_KEY);
 
             Glide.with(mBinding.getRoot().getContext())
                     .load(url)
