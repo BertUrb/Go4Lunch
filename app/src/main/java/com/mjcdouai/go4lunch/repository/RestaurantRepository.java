@@ -33,10 +33,12 @@ public class RestaurantRepository {
     public void likeRestaurant(Restaurant restaurant)
     {
         mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
+        Log.d("tag", "likeRestaurant: true");
     }
     public void unlikeRestaurant(Restaurant restaurant)
     {
         mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(false);
+        Log.d("tag", "likeRestaurant: false");
     }
 
     public static RestaurantRepository getInstance() {

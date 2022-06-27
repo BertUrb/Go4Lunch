@@ -63,6 +63,9 @@ public class WorkmatesRepository {
             initFavRestaurantList();
         }
 
+
+
+
         mFavRestaurantList.add(restaurant.getId());
 
         RestaurantsViewModel restaurantsViewModel = RestaurantsViewModel.getInstance();

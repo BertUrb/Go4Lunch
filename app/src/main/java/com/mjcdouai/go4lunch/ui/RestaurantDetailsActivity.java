@@ -2,11 +2,13 @@ package com.mjcdouai.go4lunch.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.mjcdouai.go4lunch.BuildConfig;
@@ -61,24 +63,21 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         }
 
         Log.d("TAG", "onCreate: " + restaurant.isLiked());
-        if(restaurant.isLiked())
-        {
-            mBinding.starBtn.setBackgroundColor(Color.YELLOW);
-        }
+        changeLikeStatus(restaurant.isLiked());
 
         mBinding.starBtn.setOnClickListener(view ->  {
 
+
             if(!restaurant.isLiked()) {
                 mWorkmatesViewModel.addFavoriteRestaurant(restaurant);
-                mBinding.starBtn.setBackgroundColor(Color.YELLOW);
                 restaurant.setLiked(true);
 
             }
             else {
                 mWorkmatesViewModel.removeFavoriteRestaurant(restaurant);
-                mBinding.starBtn.setBackgroundColor(Color.TRANSPARENT);
                 restaurant.setLiked(false);
             }
+            changeLikeStatus(restaurant.isLiked());
 
         });
 
@@ -164,5 +163,13 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
 
         });
+    }
+
+    private void changeLikeStatus(Boolean isLiked) {
+        int resourceId = (isLiked) ? R.drawable.ic_baseline_star_24 : R.drawable.ic_baseline_star_outline_48;
+        Drawable drawable = ContextCompat.getDrawable(this, resourceId);
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), 120);
+        mBinding.starBtn.setCompoundDrawables(null, drawable, null, null);
+        mBinding.starBtn.setBackgroundResource(resourceId);
     }
 }
