@@ -32,28 +32,10 @@ public class RestaurantRepository {
     }
     public void likeRestaurant(Restaurant restaurant)
     {
-        for(int i=0; i< mRestaurantList.size();i++ )
-        {
-            if(Objects.equals(mRestaurantList.get(i).getId(), restaurant.getId()))
-            {
-                mRestaurantList.get(i).setLiked(true);
-                Log.d("TAG", "likeRestaurant: ");
-            }
-
-        }
-        //mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
+        mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
     }
     public void unlikeRestaurant(Restaurant restaurant)
     {
-        for(int i=0; i< mRestaurantList.size();i++ )
-        {
-            if(Objects.equals(mRestaurantList.get(i).getId(), restaurant.getId()))
-            {
-                mRestaurantList.get(i).setLiked(false);
-                Log.d("TAG", "unlikeRestaurant: ");
-            }
-
-        }
         mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(false);
     }
 

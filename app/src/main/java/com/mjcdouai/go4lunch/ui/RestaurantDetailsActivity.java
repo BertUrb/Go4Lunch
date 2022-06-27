@@ -117,14 +117,15 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
         mWorkmatesViewModel.getWorkmateInThis(restaurant.getId()).observe(this,
                 workmates -> {
-                    mBinding.joiningWorkmates.setAdapter(new RestaurantDetailsWorkmatesAdapter(workmates));
                     mWorkmates = workmates;
+                    mBinding.joiningWorkmates.setAdapter(new RestaurantDetailsWorkmatesAdapter(mWorkmates));
+
 
                     UserManager userManager = UserManager.getInstance();
 
                     mWorkmate = new Workmate(userManager.getCurrentUser().getEmail(),
                             userManager.getCurrentUser().getDisplayName(),
-                            userManager.getCurrentUser().getPhotoUrl().toString());
+                            Objects.requireNonNull(userManager.getCurrentUser().getPhotoUrl()).toString());
 
                     for(Workmate workmate: mWorkmates)
                     {
@@ -149,12 +150,18 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             if (Objects.equals(mWorkmate.getChosenRestaurantId(), restaurant.getId())) {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_outline_24);
                 mWorkmate.setChosenRestaurantId("");
+                Objects.requireNonNull(mBinding.joiningWorkmates.getAdapter()).notifyItemRemoved(mWorkmates.indexOf(mWorkmate));
+                mWorkmates.remove(mWorkmate);
                 mWorkmatesViewModel.insertWorkmate(mWorkmate,getResources().getString(R.string.not_decided));
+
             } else {
-                mBinding.joinFab.setImageResource(R.drawable.green_check_circle_24);;
+                mBinding.joinFab.setImageResource(R.drawable.green_check_circle_24);
                 mWorkmate.setChosenRestaurantId(restaurant.getId());
                 mWorkmatesViewModel.insertWorkmate(mWorkmate,restaurant.getName());
+                mWorkmates.add(mWorkmate);
+                Objects.requireNonNull(mBinding.joiningWorkmates.getAdapter()).notifyItemInserted(mWorkmates.indexOf(mWorkmate));
             }
+
 
         });
     }

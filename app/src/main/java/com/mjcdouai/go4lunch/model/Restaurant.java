@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Restaurant implements Parcelable {
     private String mName;
@@ -175,5 +176,34 @@ public class Restaurant implements Parcelable {
         parcel.writeFloat(mRating);
     }
 
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "mName='" + mName + '\'' +
+                ", mAddress='" + mAddress + '\'' +
+                ", mIsOpen=" + mIsOpen +
+                ", mLatitude=" + mLatitude +
+                ", mLongitude=" + mLongitude +
+                ", mWebsite='" + mWebsite + '\'' +
+                ", mLiked=" + mLiked +
+                ", mChosen=" + mChosen +
+                ", mPhone='" + mPhone + '\'' +
+                ", mId='" + mId + '\'' +
+                ", mPhotoReferences=" + mPhotoReferences +
+                ", mRating=" + mRating +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Restaurant that = (Restaurant) o;
+        return mId.equals(that.mId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mId);
+    }
 }
