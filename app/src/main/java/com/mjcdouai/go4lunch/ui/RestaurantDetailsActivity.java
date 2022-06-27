@@ -1,7 +1,6 @@
 package com.mjcdouai.go4lunch.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -168,7 +167,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private void changeLikeStatus(Boolean isLiked) {
         int resourceId = (isLiked) ? R.drawable.ic_baseline_star_24 : R.drawable.ic_baseline_star_outline_48;
         Drawable drawable = ContextCompat.getDrawable(this, resourceId);
-        drawable.setBounds(0, 0, drawable.getMinimumWidth(), 120);
+        Objects.requireNonNull(drawable).setBounds(0, 0, drawable.getMinimumWidth(), 120);
         mBinding.starBtn.setCompoundDrawables(null, drawable, null, null);
         mBinding.starBtn.setBackgroundResource(resourceId);
     }
