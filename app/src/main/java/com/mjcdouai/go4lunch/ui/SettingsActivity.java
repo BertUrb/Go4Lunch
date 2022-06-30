@@ -3,7 +3,6 @@ package com.mjcdouai.go4lunch.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.SeekBar;
 
 import com.mjcdouai.go4lunch.R;
@@ -25,7 +24,7 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
         super.onCreate(savedInstanceState);
         setContentView(mBinding.getRoot());
         SharedPrefsHelper sharedPrefsHelper = new SharedPrefsHelper(getApplicationContext());
-        mBinding.rangePicker.setProgress(sharedPrefsHelper.getRange());
+        mBinding.rangePicker.setProgress(sharedPrefsHelper.getRadius());
         mBinding.notificationSwitch.setChecked(sharedPrefsHelper.getNotification());
         mBinding.languageSpinner.setSelection(languagesList.indexOf(sharedPrefsHelper.getLanguage()));
         mBinding.rangePicker.setKeyProgressIncrement(100);
@@ -34,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
         mBinding.rangePicker.setOnSeekBarChangeListener(this);
         mBinding.saveButton.setOnClickListener(view -> {
 
-            sharedPrefsHelper.setRange(mBinding.rangePicker.getProgress());
+            sharedPrefsHelper.setRadius(mBinding.rangePicker.getProgress());
             sharedPrefsHelper.setLanguage(mBinding.languageSpinner.getSelectedItem().toString());
             sharedPrefsHelper.setNotification(mBinding.notificationSwitch.getShowText());
             finish();

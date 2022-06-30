@@ -9,21 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 
 import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
 import com.mjcdouai.go4lunch.databinding.FragmentListViewBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
-import com.mjcdouai.go4lunch.repository.WorkmatesRepository;
 import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
 import com.mjcdouai.go4lunch.ui.RestaurantRecyclerviewAdapter;
 import com.mjcdouai.go4lunch.utils.LocationHelper;
+import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 import com.mjcdouai.go4lunch.utils.WorkmateWithRestaurantName;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -76,8 +74,8 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
             }
         } );
 
-
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), restaurants -> {
+        int radius = new SharedPrefsHelper(requireContext()).getRadius();
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), restaurants -> {
             mRestaurantList = restaurants;
 
 

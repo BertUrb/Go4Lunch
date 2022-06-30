@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 public class SharedPrefsHelper {
 
     private static final String SHARED_PREF = "SHARED_PREF";
-    private static final String SHARED_PREF_RANGE = "SHARED_PREF_RANGE";
+    private static final String SHARED_PREF_RADIUS = "SHARED_PREF_RADIUS";
     private static final String SHARED_PREF_LANGUAGE = "SHARED_PREF_LANGUAGE";
     private static final String SHARED_PREF_NOTIFICATION = "SHARED_PREF_NOTIFICATION";
     private final SharedPreferences mPreferences;
@@ -17,8 +17,8 @@ public class SharedPrefsHelper {
 
     }
 
-    public int getRange(){
-        return  mPreferences.getInt(SHARED_PREF_RANGE,1500);
+    public int getRadius(){
+        return  mPreferences.getInt(SHARED_PREF_RADIUS,1500);
     }
 
     public String getLanguage() {
@@ -29,8 +29,8 @@ public class SharedPrefsHelper {
         return  mPreferences.getBoolean(SHARED_PREF_NOTIFICATION,true);
     }
 
-    public void setRange(int range) {
-        mEditor.putInt(SHARED_PREF_RANGE,range);
+    public void setRadius(int radius) {
+        mEditor.putInt(SHARED_PREF_RADIUS,radius);
         mEditor.apply();
     }
 

@@ -10,6 +10,7 @@ import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.remote.GooglePlaceDetailsResult;
 import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
+import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class RestaurantRepository {
         }
     }
 
-    public MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location) {
+    public MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location,int radius) {
 
 
 

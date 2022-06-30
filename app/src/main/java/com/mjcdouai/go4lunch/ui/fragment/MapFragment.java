@@ -22,6 +22,7 @@ import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
 import com.mjcdouai.go4lunch.utils.LocationHelper;
+import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import org.osmdroid.api.IMapController;
@@ -89,7 +90,8 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
         locationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), this::locationObserver);
         mLocation = locationHelper.getLocation();
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+        int radius = new SharedPrefsHelper(requireContext()).getRadius();
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
@@ -133,7 +135,8 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         if (!mLoadedLocations.contains(geoPoint)) {
 
             mLoadedLocations.add(geoPoint);
-            mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+            int radius = new SharedPrefsHelper(requireContext()).getRadius();
+            mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         }
     }

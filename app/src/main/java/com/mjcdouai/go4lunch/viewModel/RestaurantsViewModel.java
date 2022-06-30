@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.repository.RestaurantRepository;
+import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 
 import java.util.List;
 
@@ -17,10 +18,11 @@ public class RestaurantsViewModel extends ViewModel {
     Location mLastLocation = new Location("Last location");
     private MutableLiveData<List<Restaurant>> mLiveData;
 
-    public MutableLiveData<List<Restaurant>> loadRestaurantNearby(Location location) {
+    public MutableLiveData<List<Restaurant>> loadRestaurantNearby(Location location,int radius) {
+
 
         if (location.getLatitude() != mLastLocation.getLatitude() &&  location.getLongitude() != mLastLocation.getLongitude()) {
-            mLiveData = mRestaurantRepository.getRestaurantNearby(location);
+            mLiveData = mRestaurantRepository.getRestaurantNearby(location,radius);
             mLastLocation = location;
         }
         return mLiveData;
