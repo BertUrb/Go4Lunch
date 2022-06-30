@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+
+    tools:context=".ui.SettingsActivity">
+    <TextView
+        android:id="@+id/seekbar_label"
+        android:textSize="15sp"
+        android:labelFor="@id/range_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/restaurant_range"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="15sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/range_number"
+        app:layout_constraintStart_toEndOf="@id/seekbar_label"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textStyle="bold" />
+    <SeekBar
+        android:id="@+id/range_picker"
+        android:min="500"
+        android:layout_width="match_parent"
+        android:progress="1500"
+        android:layout_height="wrap_content"
+        android:max="20000"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seekbar_label"
+        android:paddingBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/notification_switch_label"
+        android:labelFor="@id/notification_switch"
+        android:textSize="15sp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/range_picker"
+        android:text="@string/notification_status_label"
+
+        android:paddingBottom="30dp"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:labelFor="@id/language_spinner"
+        android:id="@+id/notification_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        app:layout_constraintStart_toEndOf="@id/notification_switch_label"
+        app:layout_constraintTop_toBottomOf="@id/range_picker" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:textSize="15sp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/notification_switch_label"
+        app:layout_constraintStart_toEndOf="@id/language_spinner_label"
+        android:entries="@array/language_array"
+        android:id="@+id/language_spinner"
+        android:paddingBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/language_spinner_label"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notification_switch_label"
+        android:text="@string/language_settings_label"
+        />
+
+    <Button
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/language_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_save_button_text" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_btn_text"
+        android:id="@+id/delete_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

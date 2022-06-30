@@ -40,6 +40,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Restaurant restaurant = intent.getParcelableExtra("Restaurant");
+        Log.d("TAG", "onCreate: id:" + restaurant.getId());
 
         if (restaurant.getPhotoReferences().size() > 0) {
             String url = GoogleApi.getImageUrl(restaurant.getPhotoReferences().get(0),BuildConfig.GMAP_API_KEY);

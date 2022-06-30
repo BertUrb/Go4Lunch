@@ -1,5 +1,7 @@
 package com.mjcdouai.go4lunch.viewModel;
 
+import android.os.AsyncTask;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -17,6 +19,11 @@ public class WorkmatesViewModel extends ViewModel {
     public MutableLiveData<List<WorkmateWithRestaurantName>> getWorkmatesWithRestaurantsNames()
     {
         return mWorkmatesRepository.getWorkmatesWithRestaurants();
+    }
+
+    public  MutableLiveData<String> getMyRestaurantChoiceId()
+    {
+        return mWorkmatesRepository.getMyRestaurantChoiceId();
     }
 
     public MutableLiveData<List<WorkmateWithRestaurantName>> getAllWorkmatesWithRestaurantNames(){
@@ -60,4 +67,6 @@ public class WorkmatesViewModel extends ViewModel {
     public boolean isFavoriteRestaurant(String restaurantId) {
        return mWorkmatesRepository.isFavoriteRestaurant(restaurantId);
     }
+
+
 }

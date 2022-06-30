@@ -26,7 +26,21 @@
     <string name="website_btn">Website</string>
     <string name="not_decided">hasn\'t decided yet</string>
     <string name="choose">choose to eat at</string>
+    <string name="choose_notification">You choose to eat at </string>
+    <string name="workmates_notification">with : </string>
+    <string name="delete_btn_text">Delete account</string>
+    <string name="restaurant_range">Show the restaurant around you : </string>
+    <string name="meters">%1$d meters</string>
+    <string name="notification_status_label">Notification status :</string>
+    <string name="language_settings_label">"Language : "</string>
+    <string name="settings_save_button_text">"Save"</string>
 
+
+    <string-array name="language_array">
+        <item>Auto</item>
+        <item>English</item>
+        <item>French</item>
+    </string-array>
 
 
 </resources>

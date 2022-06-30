@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 
@@ -46,9 +47,8 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
     private MapView mMap;
     private IMapController mMapController;
-    private LocationHelper mLocationHelper;
     private Location mLocation;
-    private List<GeoPoint> mLoadedLocations = new ArrayList<>();
+    private final List<GeoPoint> mLoadedLocations = new ArrayList<>();
     private static List<String> mChosenRestaurantIds;
 
 
@@ -80,15 +80,15 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         Context ctx = getActivity();
 
-        mLocationHelper = new LocationHelper(this.getActivity(), getContext());
+        LocationHelper locationHelper = new LocationHelper(this.getActivity(), requireContext());
 
-        mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), this::locationObserver);
-        mLocation = mLocationHelper.getLocation();
+        locationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), this::locationObserver);
+        mLocation = locationHelper.getLocation();
         mRestaurantsViewModel.loadRestaurantNearby(mLocation).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
@@ -103,12 +103,12 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         mMap.setMultiTouchControls(true);
 
 
-        MyLocationNewOverlay locationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), mMap);
+        MyLocationNewOverlay locationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(Objects.requireNonNull(ctx)), mMap);
         locationNewOverlay.enableMyLocation();
         mMap.getOverlays().add(locationNewOverlay);
 
         mMapController = mMap.getController();
-        mMapController.setZoom(15.0);
+        mMapController.setZoom(17.0);
 
         createChosenRestaurantList();
 
@@ -171,8 +171,8 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         marker.setOnMarkerClickListener(this);
 
 
-        Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_place_24);
-        if (getWorkmateCountIn(restaurant.getId()) > 0) {
+        Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_noun_restaurant_map_marker_24);
+        if (getWorkmateCountIn(restaurant.getId()) > 0 ) {
             Objects.requireNonNull(d).setTint(Color.GREEN);
         } else {
             Objects.requireNonNull(d).setTint(Color.RED);

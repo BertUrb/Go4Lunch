@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -128,6 +129,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_drawer_your_lunch:
                 break;
             case R.id.menu_drawer_settings:
+                Intent settingsActivity= new Intent(getApplicationContext(),SettingsActivity.class);
+                startActivity(settingsActivity);
                 break;
             case R.id.menu_drawer_logout:
                 mUserManager.signOut(this).addOnSuccessListener(aVoid -> {

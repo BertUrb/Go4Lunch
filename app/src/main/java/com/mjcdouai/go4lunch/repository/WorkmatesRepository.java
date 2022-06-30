@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mjcdouai.go4lunch.manager.UserManager;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class WorkmatesRepository {
 
@@ -193,5 +195,22 @@ public class WorkmatesRepository {
             return false;
         }
         return mFavRestaurantList.contains(restaurantId);
+    }
+
+    public MutableLiveData<String> getMyRestaurantChoiceId() {
+        LocalDate date = LocalDate.now();
+        MutableLiveData<String> result = new MutableLiveData<>();
+
+        db.collection(COLLECTION_WORKMATES).document(UserManager.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(task -> {
+            if(Objects.requireNonNull(task.getResult().getString("date")).equals(date.toString()))
+            {
+                String res;
+                res = task.getResult().getString("chosenRestaurantId");
+                result.setValue(res);
+
+            }
+        });
+
+        return result;
     }
 }
