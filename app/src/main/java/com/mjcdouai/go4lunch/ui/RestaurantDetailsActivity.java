@@ -166,7 +166,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     }
 
     private void changeLikeStatus(Boolean isLiked) {
-        int resourceId = (isLiked) ? R.drawable.ic_baseline_star_24 : R.drawable.ic_baseline_star_outline_48;
+        int resourceId = (isLiked) ? R.drawable.ic_baseline_star_48 : R.drawable.ic_baseline_star_outline_48;
         Drawable drawable = ContextCompat.getDrawable(this, resourceId);
         Objects.requireNonNull(drawable).setBounds(0, 0, drawable.getMinimumWidth(), 120);
         mBinding.starBtn.setCompoundDrawables(null, drawable, null, null);

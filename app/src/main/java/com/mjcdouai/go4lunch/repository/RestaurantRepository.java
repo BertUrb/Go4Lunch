@@ -60,7 +60,7 @@ public class RestaurantRepository {
 
 
 
-        Call<GoogleQueryResult> call = mGoogleApi.loadRestaurantNear(location.getLatitude() + "," + location.getLongitude(), 1500, "restaurant", KEY);
+        Call<GoogleQueryResult> call = mGoogleApi.loadRestaurantNear(location.getLatitude() + "," + location.getLongitude(), radius, "restaurant", KEY);
 
         call.enqueue(new Callback<GoogleQueryResult>() {
             @Override
@@ -143,6 +143,14 @@ public class RestaurantRepository {
         }
         mutableLiveData.setValue(mRestaurantList.get(index));
         return mutableLiveData;
+    }
+
+    public int getTabIndex(String restaurantId) {
+        Restaurant restaurant = new Restaurant(restaurantId,"nom","adresse",true,10,20);
+
+
+
+        return mRestaurantList.indexOf(restaurant);
     }
 
 }

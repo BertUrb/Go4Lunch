@@ -1,40 +1,57 @@
 package com.mjcdouai.go4lunch.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
+import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.mjcdouai.go4lunch.BuildConfig;
+import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivityHomeBinding;
+import com.mjcdouai.go4lunch.manager.UserManager;
 import com.mjcdouai.go4lunch.ui.fragment.ListViewFragment;
 import com.mjcdouai.go4lunch.ui.fragment.MapFragment;
-import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.ui.fragment.WorkmatesFragment;
-import com.mjcdouai.go4lunch.manager.UserManager;
+import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 import com.mjcdouai.go4lunch.utils.WorkmateWithRestaurantName;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -56,6 +73,37 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private final UserManager mUserManager = UserManager.getInstance();
+    Intent mAutoCompleteIntent;
+
+    ActivityResultLauncher<Intent> mStartForResult;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Location location = ((MapFragment) mMapFragment).getLocation();
+        int radius = new SharedPrefsHelper(getBaseContext()).getRadius();
+        RectangularBounds rectangularBounds = RectangularBounds.newInstance(getCoordinate(location.getLatitude(), location.getLongitude(), radius * -1, radius * -1),
+                getCoordinate(location.getLatitude(), location.getLongitude(), radius, radius));
+        Log.d("TAG", "onOptionsItemSelected: " + rectangularBounds);
+
+        mAutoCompleteIntent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,
+                Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
+                .setLocationRestriction(rectangularBounds)
+                .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                .build(this);
+        mStartForResult.launch(mAutoCompleteIntent);
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,22 +111,25 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         List<String> chosenRestaurantIds = new ArrayList<>();
 
+        Places.initialize(getBaseContext(), BuildConfig.GMAP_API_KEY);
+
+
         WorkmatesViewModel workmatesViewModel = WorkmatesViewModel.getInstance();
         workmatesViewModel.getWorkmatesWithRestaurantsNames().observe(this, workmateWithRestaurantNames -> {
-            for(WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames ) {
+            for (WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames) {
                 chosenRestaurantIds.add(workmateWithRestaurantName.mWorkmate.getChosenRestaurantId());
 
             }
             mHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
             mRestaurantsViewModel = RestaurantsViewModel.getInstance();
-            mMapFragment = MapFragment.newInstance(mRestaurantsViewModel,chosenRestaurantIds);
+            mMapFragment = MapFragment.newInstance(mRestaurantsViewModel, chosenRestaurantIds);
             mActive = mMapFragment;
             mListViewFragment = ListViewFragment.newInstance(mRestaurantsViewModel);
             setContentView(mHomeBinding.getRoot());
 
             mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
-            mFragmentManager.beginTransaction().add(R.id.main_content,mMapFragment, "1").commit();
+            mFragmentManager.beginTransaction().add(R.id.main_content, mMapFragment, "1").commit();
 
             configureToolbar();
             configureDrawerLayout();
@@ -87,10 +138,35 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             BottomNavigationView navigation = mHomeBinding.mainBottomNavigation;
             navigation.setOnItemSelectedListener(this::onNavigationItemSelected);
-        } );
+        });
+
+        mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intent1 = result.getData();
+                        Place place = Autocomplete.getPlaceFromIntent(intent1);
+
+                        if(mActive == mMapFragment){
+                            ((MapFragment) mMapFragment).moveTo(place.getLatLng());
+                        }
+                        else if (mActive == mListViewFragment) {
+                            int tabIndex = mRestaurantsViewModel.getTabIndex(place.getId());
+                            mRestaurantsViewModel.loadRestaurantDetails(tabIndex).observe(this, restaurant -> {
+                                Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
+                                restaurantDetails.putExtra("Restaurant", restaurant);
+                                startActivity(restaurantDetails);
+                            });
+                        }
+                        Log.d("TAG", "onCreate: " + place);
+                    }
+                });
+
+
+
 
 
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -110,11 +186,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setProfilePicture(user.getPhotoUrl());
 
 
-
-
     }
 
-    private void setProfilePicture(Uri profilePictureUrl){
+    private void setProfilePicture(Uri profilePictureUrl) {
         Glide.with(this)
                 .load(profilePictureUrl)
                 .apply(RequestOptions.circleCropTransform())
@@ -123,44 +197,42 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
+        String text = item.getTitle().toString();
 
-        switch (id){
-            case R.id.menu_drawer_your_lunch:
-                break;
-            case R.id.menu_drawer_settings:
-                Intent settingsActivity= new Intent(getApplicationContext(),SettingsActivity.class);
-                startActivity(settingsActivity);
-                break;
-            case R.id.menu_drawer_logout:
-                mUserManager.signOut(this).addOnSuccessListener(aVoid -> {
-                    finish();
-
+        if (text.equals(getString(R.string.your_lunch))) {
+            WorkmatesViewModel.getInstance().getMyRestaurantChoiceId().observe(this, restaurantId -> {
+                int tabIndex = mRestaurantsViewModel.getTabIndex(restaurantId);
+                mRestaurantsViewModel.loadRestaurantDetails(tabIndex).observe(this, restaurant -> {
+                    Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
+                    restaurantDetails.putExtra("Restaurant", restaurant);
+                    startActivity(restaurantDetails);
                 });
 
-                break;
-            case R.id.action_map:
-                mFragmentManager.beginTransaction().hide(mActive).show(mMapFragment).commit();
-                mActive = mMapFragment;
-                break;
-            case R.id.action_list:
-                mFragmentManager.beginTransaction().hide(mActive).show(mListViewFragment).commit();
-                mActive = mListViewFragment;
+            });
+        } else if (text.equals(getString(R.string.settings))) {
+            Intent settingsActivity = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(settingsActivity);
+        } else if (text.equals(getString(R.string.logout))) {
+            mUserManager.signOut(this).addOnSuccessListener(aVoid -> finish());
+        } else if (text.equals(getString(R.string.bottom_navigation_menu_map))) {
 
-                break;
-            case R.id.action_workmates:
-                mFragmentManager.beginTransaction().hide(mActive).show(mWorkmatesFragment).commit();
-                mActive = mWorkmatesFragment;
-
-                break;
-
-            default:
-                break;
+            mFragmentManager.beginTransaction().hide(mActive).show(mMapFragment).commit();
+            mActive = mMapFragment;
+            mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(true);
+        } else if (text.equals(getString(R.string.bottom_navigation_menu_list))) {
+            mFragmentManager.beginTransaction().hide(mActive).show(mListViewFragment).commit();
+            mActive = mListViewFragment;
+            mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(true);
+        } else if (text.equals(getString(R.string.bottom_navigation_menu_workmates))) {
+            mFragmentManager.beginTransaction().hide(mActive).show(mWorkmatesFragment).commit();
+            mActive = mWorkmatesFragment;
+            mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(false);
         }
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
+
     }
 
     @Override
@@ -174,15 +246,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
-    private void configureToolbar()
-    {
+    private void configureToolbar() {
         mToolbar = mHomeBinding.homeToolbar;
         setSupportActionBar(mToolbar);
     }
 
-    private void configureDrawerLayout(){
-        mDrawerLayout =mHomeBinding.profileActivityDrawerLayout;
+    private void configureDrawerLayout() {
+        mDrawerLayout = mHomeBinding.profileActivityDrawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open_drawer, R.string.close_drawer);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -191,5 +261,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void configureNavigationView() {
         mNavigationView = mHomeBinding.profileActivityNavigationView;
         mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public static LatLng getCoordinate(double lat0, double lng0, long dy, long dx) {
+
+
+        double lat = lat0 + ((180 / Math.PI) * (dy / 6378137d));
+        double lng = lng0 + ((180 / Math.PI) * (dx / 6378137d) / Math.cos(lat0));
+
+        return new LatLng(lat, lng);
     }
 }

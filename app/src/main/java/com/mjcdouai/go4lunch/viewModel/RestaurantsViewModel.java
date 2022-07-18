@@ -58,5 +58,9 @@ public class RestaurantsViewModel extends ViewModel {
         }
     }
 
+    public int getTabIndex(String restaurantId) {
+        return mRestaurantRepository.getTabIndex(restaurantId);
+    }
+
 
 }

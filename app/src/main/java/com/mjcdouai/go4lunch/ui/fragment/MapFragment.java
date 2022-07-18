@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.FragmentMapBinding;
@@ -53,6 +54,7 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
     private static List<String> mChosenRestaurantIds;
 
 
+
     private RestaurantsViewModel mRestaurantsViewModel;
 
     public MapFragment() {
@@ -72,6 +74,10 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         mChosenRestaurantIds = chosenRestaurantIds;
 
         return mapFragment;
+    }
+
+    public Location getLocation() {
+        return mLocation;
     }
 
     @Override
@@ -115,11 +121,15 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         createChosenRestaurantList();
 
 
+
         mMapController.setCenter(startPosition);
 
 
         FloatingActionButton fab = mapBinding.fabCenterView;
         fab.setOnClickListener(this::onFabClick);
+
+
+
 
         return view;
     }
@@ -139,6 +149,10 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
             mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         }
+
+
+
+
     }
 
 
@@ -198,6 +212,8 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         Intent restaurantDetails = new Intent(getContext(), RestaurantDetailsActivity.class);
         mRestaurantsViewModel.loadRestaurantDetails(id).observe(getViewLifecycleOwner(), restaurant -> {
             restaurantDetails.putExtra("Restaurant", restaurant);
+            GeoPoint geoPoint = new GeoPoint(restaurant.getLatitude(),restaurant.getLongitude());
+            mMapController.animateTo(geoPoint);
             startActivity(restaurantDetails);
         });
         return false;
@@ -216,5 +232,9 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
 
         }
+    }
+    public void moveTo(LatLng moveTo) {
+        GeoPoint geoPoint = new GeoPoint(moveTo.latitude,moveTo.longitude);
+        mMapController.animateTo(geoPoint);
     }
 }

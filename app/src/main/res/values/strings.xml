@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
     <string name="facebook_application_id" translatable="false">397805432001964</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb397805432001964</string>
     <string name="your_lunch">Your Lunch</string>
@@ -26,14 +24,15 @@
     <string name="website_btn">Website</string>
     <string name="not_decided">hasn\'t decided yet</string>
     <string name="choose">choose to eat at</string>
-    <string name="choose_notification">You choose to eat at </string>
-    <string name="workmates_notification">with : </string>
+    <string name="choose_notification">You choose to eat at %1$s</string>
+    <string name="workmates_notification">with : %1$s</string>
     <string name="delete_btn_text">Delete account</string>
     <string name="restaurant_range">Show the restaurant around you : </string>
     <string name="meters">%1$d meters</string>
     <string name="notification_status_label">Notification status :</string>
-    <string name="language_settings_label">"Language : "</string>
-    <string name="settings_save_button_text">"Save"</string>
+    <string name="language_settings_label">Language : </string>
+    <string name="settings_save_button_text">Save</string>
+    <string name="search">Search</string>
 
 
     <string-array name="language_array">
