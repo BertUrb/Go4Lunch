@@ -12,6 +12,9 @@ public interface GoogleApi {
                                                 @Query("radius") int radius,
                                                 @Query("type") String type,
                                                 @Query("key") String apiKey);
+    @GET("nearbysearch/json")
+    Call<GoogleQueryResult> loadNextPage(@Query("pagetoken") String pageToken,
+                                         @Query("key") String apiKey);
 
 
     static String getImageUrl(String imageReference,String apiKey) {

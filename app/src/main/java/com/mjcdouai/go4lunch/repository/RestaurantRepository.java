@@ -68,6 +68,7 @@ public class RestaurantRepository {
                 Log.d("TAG", "onResponse: API");
                 mRestaurantList.clear();
                 for (GoogleQueryResult.Result result : response.body().results) {
+                    Log.d("TAG", "onResponse: " + result.name);
                     Restaurant restaurant = new Restaurant(result.place_id,
                             result.name,
                             result.address,
@@ -91,6 +92,9 @@ public class RestaurantRepository {
                     mRestaurantList.add(restaurant);
                 }
                 mutableLiveData.setValue(mRestaurantList);
+                if(!Objects.equals(response.body().next_page_token, null)) {
+                    getNextPageResults(response.body().next_page_token);
+                }
 
 
             }
@@ -108,6 +112,61 @@ public class RestaurantRepository {
 
         return mutableLiveData;
     }
+    public void getNextPageResults(String pageToken) {
+        Log.d("TAG", "getNextPageResults: " + pageToken) ;
+        Call<GoogleQueryResult> call = mGoogleApi.loadNextPage(pageToken,KEY);
+
+        call.enqueue(new Callback<GoogleQueryResult>() {
+            @Override
+            public void onResponse(Call<GoogleQueryResult> call, Response<GoogleQueryResult> response) {
+                if(response.body().status.equals("INVALID_REQUEST")){
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Log.getStackTraceString(e);
+                    }
+                    getNextPageResults(pageToken);
+                }
+                    for (GoogleQueryResult.Result result : response.body().results) {
+                        Log.d("TAG", "nextpage: " + result.name);
+                        Restaurant restaurant = new Restaurant(result.place_id,
+                                result.name,
+                                result.address,
+                                result.opening_hours.open_now,
+                                result.geometry.location.lat,
+                                result.geometry.location.lon);
+
+                        restaurant.setPhone("");
+
+                        List<String> photoRefs = new ArrayList<>();
+                        for (int i = 0; i < result.photos.size(); i++) {
+                            photoRefs.add(result.photos.get(i).mPhotoReference);
+                        }
+
+                        restaurant.setPhotoReferences(photoRefs);
+                        restaurant.setRating(result.rating);
+
+                        restaurant.setLiked(WorkmatesRepository.getInstance().isFavoriteRestaurant(restaurant.getId()));
+                        Log.d("TAG", "LIKED ?  " + restaurant.isLiked());
+
+                        mRestaurantList.add(restaurant);
+                    }
+                    if (!Objects.equals(response.body().next_page_token, null)) {
+                        getNextPageResults(response.body().next_page_token);
+                    }
+                    mutableLiveData.setValue(mRestaurantList);
+
+                }
+
+                @Override
+                public void onFailure (Call < GoogleQueryResult > call, Throwable t){
+                    Log.d("TAG", "onFailure: FAIL");
+                    Log.getStackTraceString(t);
+                }
+            });
+        }
+
+
 
     public MutableLiveData<Restaurant> getDetails(int index) {
         MutableLiveData<Restaurant> mutableLiveData = new MutableLiveData<>();
