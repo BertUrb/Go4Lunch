@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
@@ -35,7 +36,6 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
     private RestaurantsViewModel mRestaurantsViewModel;
     private List<Restaurant> mRestaurantList;
     private List<String> mChosenRestaurantIds;
-    private LocationHelper mLocationHelper;
     private Location mLocation;
     private RestaurantRecyclerviewAdapter mRestaurantRecyclerviewAdapter;
     private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
@@ -57,13 +57,13 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         mBinding = FragmentListViewBinding.inflate(inflater, container, false);
         View view = mBinding.getRoot();
-        mLocationHelper = new LocationHelper(getActivity(), getContext());
-        mLocation = mLocationHelper.getLocation();
+        LocationHelper locationHelper = new LocationHelper(getActivity(), requireContext());
+        mLocation = locationHelper.getLocation();
 
 
         OnClickRestaurantListener listener = this;
@@ -78,7 +78,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         int radius = new SharedPrefsHelper(requireContext()).getRadius();
 
 
-        mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), location -> {
+        locationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), location -> {
             Log.d("TAG", "onLocationChanged: ");
             if(mRestaurantRecyclerviewAdapter != null) {
                 mRestaurantRecyclerviewAdapter.setLocation(location);
