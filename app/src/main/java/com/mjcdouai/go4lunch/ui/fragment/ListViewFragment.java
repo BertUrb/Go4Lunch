@@ -65,6 +65,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         mLocationHelper = new LocationHelper(getActivity(), getContext());
         mLocation = mLocationHelper.getLocation();
 
+
         OnClickRestaurantListener listener = this;
         mChosenRestaurantIds = new ArrayList<>();
 
@@ -75,14 +76,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         } );
 
         int radius = new SharedPrefsHelper(requireContext()).getRadius();
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), restaurants -> {
-            mRestaurantList = restaurants;
 
-
-            mRestaurantRecyclerviewAdapter = new RestaurantRecyclerviewAdapter(
-                    mRestaurantList,mChosenRestaurantIds, listener);
-            mBinding.recyclerview.setAdapter(mRestaurantRecyclerviewAdapter);
-        });
 
         mLocationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), location -> {
             Log.d("TAG", "onLocationChanged: ");
@@ -91,6 +85,17 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
             }
             mLocation = location;
 
+        });
+
+
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), restaurants -> {
+            mRestaurantList = restaurants;
+
+
+            mRestaurantRecyclerviewAdapter = new RestaurantRecyclerviewAdapter(
+                    mRestaurantList,mChosenRestaurantIds, listener);
+            mRestaurantRecyclerviewAdapter.setLocation(mLocation);
+            mBinding.recyclerview.setAdapter(mRestaurantRecyclerviewAdapter);
         });
         return view;
     }
