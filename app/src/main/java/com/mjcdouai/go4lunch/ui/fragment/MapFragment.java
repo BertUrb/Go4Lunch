@@ -157,13 +157,11 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
 
     public void getRestaurantObserver(List<Restaurant> restaurantList) {
-        int index = 0;
         mMap.getOverlays().clear();
         if (restaurantList.size() != 0) {
             for (Restaurant restaurant : restaurantList) {
 
-                addMarker(restaurant,index);
-                index++;
+                addMarker(restaurant);
             }
         } else {
             mLoadedLocations.remove(new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude()));
@@ -176,15 +174,14 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
     }
 
 
-    void addMarker(Restaurant restaurant,int index) {
+    void addMarker(Restaurant restaurant) {
 
-        String id = ""+ index;
         MyMarker marker = new MyMarker(mMap);
         marker.setPosition(new GeoPoint(restaurant.getLatitude(), restaurant.getLongitude()));
         marker.setTitle(restaurant.getName());
         marker.setSubDescription(restaurant.getAddress());
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setId(id);
+        marker.setId(restaurant.getId());
         marker.setOnMarkerClickListener(this);
 
 
@@ -208,9 +205,8 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
     @Override
     public boolean onMarkerClick(Marker marker, MapView mapView) {
-        int id = Integer.parseInt(marker.getId());
         Intent restaurantDetails = new Intent(getContext(), RestaurantDetailsActivity.class);
-        mRestaurantsViewModel.loadRestaurantDetails(id).observe(getViewLifecycleOwner(), restaurant -> {
+        mRestaurantsViewModel.loadRestaurantDetails(marker.getId()).observe(getViewLifecycleOwner(), restaurant -> {
             restaurantDetails.putExtra("Restaurant", restaurant);
             GeoPoint geoPoint = new GeoPoint(restaurant.getLatitude(),restaurant.getLongitude());
             mMapController.animateTo(geoPoint);

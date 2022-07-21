@@ -29,13 +29,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <service
-            android:name=".remote.MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+        <receiver android:name=".remote.MyFirebaseMessagingService" />
 
         <activity
             android:name=".ui.RestaurantDetailsActivity"

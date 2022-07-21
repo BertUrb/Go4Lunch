@@ -3,34 +3,32 @@ package com.mjcdouai.go4lunch.remote;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.manager.UserManager;
-import com.mjcdouai.go4lunch.ui.HomeActivity;
+import com.mjcdouai.go4lunch.model.Restaurant;
+import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
+import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
-    @Override
-    public void onNewToken(@NonNull String token) {
-        super.onNewToken(token);
-    }
+public class MyFirebaseMessagingService extends BroadcastReceiver {
+
+    private final RestaurantsViewModel mRestaurantsViewModel = RestaurantsViewModel.getInstance();
+
 
     @Override
-    public void
-    onMessageReceived(@NonNull RemoteMessage remoteMessage) {
+    public void onReceive(Context context, Intent intent) {
         Log.d("TAGn", "onMessageReceived: ");
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         UserManager userManager = UserManager.getInstance();
@@ -41,7 +39,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 String res = task.getResult().getString("chosenRestaurantId");
                 Log.d("TAGn", "onMessageReceived: 2" + res);
-                if (!Objects.equals(res, getResources().getString(R.string.not_decided))) {
+                if (!Objects.equals(res, context.getResources().getString(R.string.not_decided))) {
+
+
 
                     db.collection("workmates").whereEqualTo("chosenRestaurantId", res)
                             .whereEqualTo("date", date.toString())
@@ -59,16 +59,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                     }
 
                                 }
-                                String title = getString(R.string.choose_notification, restaurantName);
-                                String body = getResources().getString(R.string.workmates_notification, workmates.substring(0, workmates.length() - 1));
+                                String title = context.getResources().getString(R.string.choose_notification, restaurantName);
+                                String body = context.getResources().getString(R.string.workmates_notification, workmates.substring(0, workmates.length() - 1));
 
                                 Log.d("TAGn", "onMessageReceived: " + title);
-                                if (remoteMessage.getNotification() != null) {
                                     Log.d("TAGn", "onMessageReceived: 4");
-                                    showNotification(
+                                    mRestaurantsViewModel.loadRestaurantDetails(res).observeForever(restaurant -> showNotification(context,
                                             title,
-                                            body);
-                                }
+                                            body,
+                                            restaurant));
+
+
 
                             });
                 }
@@ -77,10 +78,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private RemoteViews getCustomDesign(String title,
+    private RemoteViews getCustomDesign(Context context,String title,
                                         String message) {
         RemoteViews remoteViews = new RemoteViews(
-                getApplicationContext().getPackageName(),
+                context.getApplicationContext().getPackageName(),
                 R.layout.notification);
         remoteViews.setTextViewText(R.id.title, title);
         remoteViews.setTextViewText(R.id.message, message);
@@ -90,23 +91,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
 
-    public void showNotification(String title,
-                                 String message) {
+    public void showNotification(Context context,String title,
+                                 String message, Restaurant restaurant) {
 
         Intent intent
-                = new Intent(this, HomeActivity.class);
+                = new Intent(context, RestaurantDetailsActivity.class);
 
         String channel_id = "notification_channel";
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+             intent.putExtra("Restaurant",restaurant);
         PendingIntent pendingIntent
                 = PendingIntent.getActivity(
-                this, 0, intent,
+                context, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
 
         NotificationCompat.Builder builder
                 = new NotificationCompat
-                .Builder(getApplicationContext(),
+                .Builder(context,
                 channel_id)
                 .setSmallIcon(R.drawable.go4lunch_logo_textless)
                 .setAutoCancel(true)
@@ -117,11 +119,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         builder = builder.setContent(
-                getCustomDesign(title, message));
+                getCustomDesign(context,title, message));
 
 
         NotificationManager notificationManager
-                = (NotificationManager) getSystemService(
+                = (NotificationManager) context.getSystemService(
                 Context.NOTIFICATION_SERVICE);
 
         NotificationChannel notificationChannel

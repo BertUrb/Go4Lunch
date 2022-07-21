@@ -35,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
 
             sharedPrefsHelper.setRadius(mBinding.rangePicker.getProgress());
             sharedPrefsHelper.setLanguage(mBinding.languageSpinner.getSelectedItem().toString());
-            sharedPrefsHelper.setNotification(mBinding.notificationSwitch.getShowText());
+            sharedPrefsHelper.setNotification(mBinding.notificationSwitch.isChecked());
             finish();
         });
     }

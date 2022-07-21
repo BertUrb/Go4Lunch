@@ -1,10 +1,15 @@
 package com.mjcdouai.go4lunch.ui;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,10 +43,12 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.RemoteMessage;
 import com.mjcdouai.go4lunch.BuildConfig;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivityHomeBinding;
 import com.mjcdouai.go4lunch.manager.UserManager;
+import com.mjcdouai.go4lunch.remote.MyFirebaseMessagingService;
 import com.mjcdouai.go4lunch.ui.fragment.ListViewFragment;
 import com.mjcdouai.go4lunch.ui.fragment.MapFragment;
 import com.mjcdouai.go4lunch.ui.fragment.WorkmatesFragment;
@@ -52,6 +59,7 @@ import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -114,6 +122,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         Places.initialize(getBaseContext(), BuildConfig.GMAP_API_KEY);
 
 
+        if(new SharedPrefsHelper(getBaseContext()).getNotification()) {
+            scheduleNotification();
+
+        }else {
+            cancelNotification();
+        }
+
+
         WorkmatesViewModel workmatesViewModel = WorkmatesViewModel.getInstance();
         workmatesViewModel.getWorkmatesWithRestaurantsNames().observe(this, workmateWithRestaurantNames -> {
             for (WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames) {
@@ -150,8 +166,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             ((MapFragment) mMapFragment).moveTo(place.getLatLng());
                         }
                         else if (mActive == mListViewFragment) {
-                            int tabIndex = mRestaurantsViewModel.getTabIndex(place.getId());
-                            mRestaurantsViewModel.loadRestaurantDetails(tabIndex).observe(this, restaurant -> {
+                            mRestaurantsViewModel.loadRestaurantDetails(place.getId()).observe(this, restaurant -> {
                                 Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
                                 restaurantDetails.putExtra("Restaurant", restaurant);
                                 startActivity(restaurantDetails);
@@ -164,6 +179,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
+    }
+
+    private void cancelNotification() {
+        Intent notificationIntent = new Intent(this, MyFirebaseMessagingService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
 
     }
 
@@ -201,8 +225,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (text.equals(getString(R.string.your_lunch))) {
             WorkmatesViewModel.getInstance().getMyRestaurantChoiceId().observe(this, restaurantId -> {
-                int tabIndex = mRestaurantsViewModel.getTabIndex(restaurantId);
-                mRestaurantsViewModel.loadRestaurantDetails(tabIndex).observe(this, restaurant -> {
+                mRestaurantsViewModel.loadRestaurantDetails(restaurantId).observe(this, restaurant -> {
                     Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
                     restaurantDetails.putExtra("Restaurant", restaurant);
                     startActivity(restaurantDetails);
@@ -263,7 +286,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
-    public static LatLng getCoordinate(double lat0, double lng0, long dy, long dx) {
+    public LatLng getCoordinate(double lat0, double lng0, long dy, long dx) {
 
 
         double lat = lat0 + ((180 / Math.PI) * (dy / 6378137d));
@@ -271,4 +294,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         return new LatLng(lat, lng);
     }
+
+    private void scheduleNotification() {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(Calendar.HOUR_OF_DAY,12);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+
+        Intent notificationIntent = new Intent(this, MyFirebaseMessagingService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+
 }

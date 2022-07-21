@@ -104,7 +104,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
     @Override
     public void onRestaurantClick(int position) {
         Intent restaurantDetails = new Intent(getContext(), RestaurantDetailsActivity.class);
-        mRestaurantsViewModel.loadRestaurantDetails(position).observe(getViewLifecycleOwner(), restaurant -> {
+        mRestaurantsViewModel.loadRestaurantDetails(mRestaurantList.get(position).getId()).observe(getViewLifecycleOwner(), restaurant -> {
             restaurantDetails.putExtra("Restaurant", restaurant);
             startActivity(restaurantDetails);
         });

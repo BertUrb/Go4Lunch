@@ -28,9 +28,9 @@ public class RestaurantsViewModel extends ViewModel {
         return mLiveData;
     }
 
-    public MutableLiveData<Restaurant> loadRestaurantDetails(int index) {
+    public MutableLiveData<Restaurant> loadRestaurantDetails(String id) {
 
-        return mRestaurantRepository.getDetails(index);
+        return mRestaurantRepository.getDetails(id);
     }
 
     public void likeRestaurant(Restaurant restaurant)

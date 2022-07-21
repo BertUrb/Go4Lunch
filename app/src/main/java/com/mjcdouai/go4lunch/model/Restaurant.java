@@ -3,6 +3,8 @@ package com.mjcdouai.go4lunch.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +18,7 @@ public class Restaurant implements Parcelable {
     private boolean mLiked;
     private boolean mChosen;
     private String mPhone;
+    private boolean mDetailsLoaded;
 
     public String getId() {
         return mId;
@@ -80,6 +83,15 @@ public class Restaurant implements Parcelable {
         this.mIsOpen = isOpen;
         mLatitude = latitude;
         mLongitude = longitude;
+        mDetailsLoaded=false;
+    }
+
+    public void setDetailsLoaded(boolean detailsLoaded) {
+        mDetailsLoaded = detailsLoaded;
+    }
+
+    public boolean getDetailsLoaded(){
+        return mDetailsLoaded;
     }
 
     public void setName(String name) {
@@ -176,6 +188,7 @@ public class Restaurant implements Parcelable {
         parcel.writeFloat(mRating);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Restaurant{" +

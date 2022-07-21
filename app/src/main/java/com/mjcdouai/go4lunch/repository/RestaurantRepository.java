@@ -10,8 +10,6 @@ import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.remote.GooglePlaceDetailsResult;
 import com.mjcdouai.go4lunch.remote.GoogleQueryResult;
-import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
-import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +29,13 @@ public class RestaurantRepository {
 
     private RestaurantRepository() {
     }
-    public void likeRestaurant(Restaurant restaurant)
-    {
+
+    public void likeRestaurant(Restaurant restaurant) {
         mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
         Log.d("tag", "likeRestaurant: true");
     }
-    public void unlikeRestaurant(Restaurant restaurant)
-    {
+
+    public void unlikeRestaurant(Restaurant restaurant) {
         mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(false);
         Log.d("tag", "likeRestaurant: false");
     }
@@ -55,9 +53,7 @@ public class RestaurantRepository {
         }
     }
 
-    public MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location,int radius) {
-
-
+    public MutableLiveData<List<Restaurant>> getRestaurantNearby(Location location, int radius) {
 
 
         Call<GoogleQueryResult> call = mGoogleApi.loadRestaurantNear(location.getLatitude() + "," + location.getLongitude(), radius, "restaurant", KEY);
@@ -92,7 +88,7 @@ public class RestaurantRepository {
                     mRestaurantList.add(restaurant);
                 }
                 mutableLiveData.setValue(mRestaurantList);
-                if(!Objects.equals(response.body().next_page_token, null)) {
+                if (!Objects.equals(response.body().next_page_token, null)) {
                     getNextPageResults(response.body().next_page_token);
                 }
 
@@ -109,17 +105,17 @@ public class RestaurantRepository {
         });
 
 
-
         return mutableLiveData;
     }
+
     public void getNextPageResults(String pageToken) {
-        Log.d("TAG", "getNextPageResults: " + pageToken) ;
-        Call<GoogleQueryResult> call = mGoogleApi.loadNextPage(pageToken,KEY);
+        Log.d("TAG", "getNextPageResults: " + pageToken);
+        Call<GoogleQueryResult> call = mGoogleApi.loadNextPage(pageToken, KEY);
 
         call.enqueue(new Callback<GoogleQueryResult>() {
             @Override
             public void onResponse(Call<GoogleQueryResult> call, Response<GoogleQueryResult> response) {
-                if(response.body().status.equals("INVALID_REQUEST")){
+                if (response.body().status.equals("INVALID_REQUEST")) {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
@@ -127,68 +123,89 @@ public class RestaurantRepository {
                     }
                     getNextPageResults(pageToken);
                 }
-                    for (GoogleQueryResult.Result result : response.body().results) {
-                        Log.d("TAG", "nextpage: " + result.name);
-                        Restaurant restaurant = new Restaurant(result.place_id,
-                                result.name,
-                                result.address,
-                                result.opening_hours.open_now,
-                                result.geometry.location.lat,
-                                result.geometry.location.lon);
+                for (GoogleQueryResult.Result result : response.body().results) {
+                    Log.d("TAG", "nextpage: " + result.name);
+                    Restaurant restaurant = new Restaurant(result.place_id,
+                            result.name,
+                            result.address,
+                            result.opening_hours.open_now,
+                            result.geometry.location.lat,
+                            result.geometry.location.lon);
 
-                        restaurant.setPhone("");
+                    restaurant.setPhone("");
 
-                        List<String> photoRefs = new ArrayList<>();
-                        for (int i = 0; i < result.photos.size(); i++) {
-                            photoRefs.add(result.photos.get(i).mPhotoReference);
-                        }
-
-                        restaurant.setPhotoReferences(photoRefs);
-                        restaurant.setRating(result.rating);
-
-                        restaurant.setLiked(WorkmatesRepository.getInstance().isFavoriteRestaurant(restaurant.getId()));
-                        Log.d("TAG", "LIKED ?  " + restaurant.isLiked());
-
-                        mRestaurantList.add(restaurant);
+                    List<String> photoRefs = new ArrayList<>();
+                    for (int i = 0; i < result.photos.size(); i++) {
+                        photoRefs.add(result.photos.get(i).mPhotoReference);
                     }
-                    if (!Objects.equals(response.body().next_page_token, null)) {
-                        getNextPageResults(response.body().next_page_token);
-                    }
-                    mutableLiveData.setValue(mRestaurantList);
 
+                    restaurant.setPhotoReferences(photoRefs);
+                    restaurant.setRating(result.rating);
+
+                    restaurant.setLiked(WorkmatesRepository.getInstance().isFavoriteRestaurant(restaurant.getId()));
+                    Log.d("TAG", "LIKED ?  " + restaurant.isLiked());
+
+                    mRestaurantList.add(restaurant);
                 }
-
-                @Override
-                public void onFailure (Call < GoogleQueryResult > call, Throwable t){
-                    Log.d("TAG", "onFailure: FAIL");
-                    Log.getStackTraceString(t);
+                if (!Objects.equals(response.body().next_page_token, null)) {
+                    getNextPageResults(response.body().next_page_token);
                 }
-            });
-        }
+                mutableLiveData.setValue(mRestaurantList);
+
+            }
+
+            @Override
+            public void onFailure(Call<GoogleQueryResult> call, Throwable t) {
+                Log.d("TAG", "onFailure: FAIL");
+                Log.getStackTraceString(t);
+            }
+        });
+    }
 
 
-
-    public MutableLiveData<Restaurant> getDetails(int index) {
+    public MutableLiveData<Restaurant> getDetails(String id) {
         MutableLiveData<Restaurant> mutableLiveData = new MutableLiveData<>();
-        if (Objects.equals(mRestaurantList.get(index).getPhone(), "")) {
-            Call<GooglePlaceDetailsResult> call = mGoogleApi.loadRestaurantDetails(mRestaurantList.get(index).getId(), KEY);
+        Call<GooglePlaceDetailsResult> call = mGoogleApi.loadRestaurantDetails(id, KEY);
+        boolean next = true;
+        int index = getTabIndex(id);
+        if (index > 0) {
+            if (mRestaurantList.get(index).getDetailsLoaded()) {
+                mutableLiveData.setValue(mRestaurantList.get(index));
+                next = false;
+            }
+        }
+        if (next) {
+
             call.enqueue(new Callback<GooglePlaceDetailsResult>() {
+
                 @Override
                 public void onResponse(Call<GooglePlaceDetailsResult> call, Response<GooglePlaceDetailsResult> response) {
 
-                    String phone = response.body().result.phone_number;
-                    if (!Objects.equals(phone, "")) {
-                        mRestaurantList.get(index).setPhone(phone);
-                    } else {
-                        mRestaurantList.get(index).setPhone("none");
+
+                    Restaurant restaurant = new Restaurant(id,
+                            response.body().result.name,
+                            response.body().result.address,
+                            true,
+                            response.body().result.geometry.location.lat,
+                            response.body().result.geometry.location.lng);
+
+                    List<String> refs = new ArrayList<>();
+                    for(GooglePlaceDetailsResult.Result.Photos photo : response.body().result.photos) {
+                        refs.add(photo.photo_reference);
+                    }
+                    restaurant.setPhotoReferences(refs);
+
+                    restaurant.setWebsite(response.body().result.website);
+                    restaurant.setDetailsLoaded(true);
+                    restaurant.setPhone(response.body().result.phone_number);
+
+
+                    if (index > 0) {
+                        restaurant.setOpen(mRestaurantList.get(index).isOpen());
+                        mRestaurantList.set(index, restaurant);
                     }
 
-                    String website = response.body().result.website;
-                    if (!Objects.equals(website, "")) {
-                        mRestaurantList.get(index).setWebsite(website);
-                    } else {
-                        mRestaurantList.get(index).setWebsite("none");
-                    }
+                    mutableLiveData.setValue(restaurant);
 
 
                 }
@@ -200,13 +217,13 @@ public class RestaurantRepository {
 
             });
         }
-        mutableLiveData.setValue(mRestaurantList.get(index));
+
+
         return mutableLiveData;
     }
 
     public int getTabIndex(String restaurantId) {
-        Restaurant restaurant = new Restaurant(restaurantId,"nom","adresse",true,10,20);
-
+        Restaurant restaurant = new Restaurant(restaurantId, "nom", "adresse", true, 10, 20);
 
 
         return mRestaurantList.indexOf(restaurant);
