@@ -2,7 +2,6 @@ package com.mjcdouai.go4lunch.ui;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +16,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -38,12 +35,10 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.RemoteMessage;
 import com.mjcdouai.go4lunch.BuildConfig;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivityHomeBinding;
@@ -61,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -140,7 +136,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mRestaurantsViewModel = RestaurantsViewModel.getInstance();
             mMapFragment = MapFragment.newInstance(mRestaurantsViewModel, chosenRestaurantIds);
             mActive = mMapFragment;
-            mListViewFragment = ListViewFragment.newInstance(mRestaurantsViewModel);
+            mListViewFragment = ListViewFragment.newInstance();
             setContentView(mHomeBinding.getRoot());
 
             mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
@@ -160,10 +156,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent intent1 = result.getData();
+                        assert intent1 != null;
                         Place place = Autocomplete.getPlaceFromIntent(intent1);
 
                         if(mActive == mMapFragment){
-                            ((MapFragment) mMapFragment).moveTo(place.getLatLng());
+                            ((MapFragment) mMapFragment).moveTo(Objects.requireNonNull(place.getLatLng()));
                         }
                         else if (mActive == mListViewFragment) {
                             mRestaurantsViewModel.loadRestaurantDetails(place.getId()).observe(this, restaurant -> {
@@ -184,7 +181,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void cancelNotification() {
         Intent notificationIntent = new Intent(this, MyFirebaseMessagingService.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
@@ -224,14 +221,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         String text = item.getTitle().toString();
 
         if (text.equals(getString(R.string.your_lunch))) {
-            WorkmatesViewModel.getInstance().getMyRestaurantChoiceId().observe(this, restaurantId -> {
-                mRestaurantsViewModel.loadRestaurantDetails(restaurantId).observe(this, restaurant -> {
-                    Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
-                    restaurantDetails.putExtra("Restaurant", restaurant);
-                    startActivity(restaurantDetails);
-                });
-
-            });
+            WorkmatesViewModel.getInstance().getMyRestaurantChoiceId().observe(this,
+                    restaurantId -> mRestaurantsViewModel.loadRestaurantDetails(restaurantId).observe(this, restaurant -> {
+                Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
+                restaurantDetails.putExtra("Restaurant", restaurant);
+                startActivity(restaurantDetails);
+            }));
         } else if (text.equals(getString(R.string.settings))) {
             Intent settingsActivity = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(settingsActivity);
@@ -296,17 +291,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void scheduleNotification() {
-        Calendar calendar = Calendar.getInstance();
+        Log.d("TAG", "scheduleNotification: ");
 
-        calendar.set(Calendar.HOUR_OF_DAY,12);
-        calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,0);
 
-        Intent notificationIntent = new Intent(this, MyFirebaseMessagingService.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar currentDate = Calendar.getInstance();
+        currentDate.setTimeInMillis(System.currentTimeMillis());
+        Calendar dueDate = Calendar.getInstance();
+        dueDate.setTimeInMillis(System.currentTimeMillis());
+        dueDate.set(Calendar.HOUR_OF_DAY,12);
+        dueDate.set(Calendar.MINUTE,0);
+        dueDate.set(Calendar.SECOND,0);
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
+        if(dueDate.before(currentDate))
+        {
+            dueDate.add(Calendar.HOUR_OF_DAY,24);
+        }
+
+        long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+        Log.d("timediff", "scheduleNotification: " + timeDiff);
+        Intent notificationIntent = new Intent( this, MyFirebaseMessagingService. class ) ;
+        PendingIntent pendingIntent = PendingIntent. getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT ) ;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context. ALARM_SERVICE ) ;
+        assert alarmManager != null;
+
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeDiff, pendingIntent) ;
     }
 
 

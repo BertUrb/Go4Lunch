@@ -1,25 +1,30 @@
 package com.mjcdouai.go4lunch.remote;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
+import com.facebook.share.Share;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.manager.UserManager;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.ui.RestaurantDetailsActivity;
+import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 import com.mjcdouai.go4lunch.viewModel.RestaurantsViewModel;
 
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Objects;
 
 public class MyFirebaseMessagingService extends BroadcastReceiver {
@@ -36,10 +41,10 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
         db.collection("workmates").document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).get().addOnCompleteListener(task -> {
             if (Objects.requireNonNull(task.getResult().getString("date")).equals(date.toString())) {
 
-
+                String restaurantName = task.getResult().getString("restaurantName");
                 String res = task.getResult().getString("chosenRestaurantId");
                 Log.d("TAGn", "onMessageReceived: 2" + res);
-                if (!Objects.equals(res, context.getResources().getString(R.string.not_decided))) {
+                if (!Objects.equals(restaurantName, context.getResources().getString(R.string.not_decided))) {
 
 
 
@@ -47,20 +52,24 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
                             .whereEqualTo("date", date.toString())
                             .get()
                             .addOnCompleteListener(task2 -> {
-                                String restaurantName = null;
+
                                 Log.d("TAGn", "onMessageReceived: 3");
 
                                 StringBuilder workmates = new StringBuilder();
                                 for (QueryDocumentSnapshot document : task2.getResult()) {
                                     if (!document.getId().equals(userManager.getCurrentUser().getEmail())) {
                                         workmates.append(document.getString("name")).append(",");
-                                        restaurantName = document.getString("restaurantName");
+
 
                                     }
 
                                 }
                                 String title = context.getResources().getString(R.string.choose_notification, restaurantName);
-                                String body = context.getResources().getString(R.string.workmates_notification, workmates.substring(0, workmates.length() - 1));
+                                if(workmates.length()>1)
+                                {
+                                    workmates.setLength(workmates.length() -1);
+                                }
+                                String body = context.getResources().getString(R.string.workmates_notification, workmates );
 
                                 Log.d("TAGn", "onMessageReceived: " + title);
                                     Log.d("TAGn", "onMessageReceived: 4");
@@ -76,6 +85,31 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
             }
         });
 
+        Calendar currentDate = Calendar.getInstance();
+        currentDate.setTimeInMillis(System.currentTimeMillis());
+        Calendar dueDate = Calendar.getInstance();
+
+        dueDate.set(Calendar.HOUR_OF_DAY,12);
+        dueDate.set(Calendar.MINUTE,0);
+        dueDate.set(Calendar.SECOND,0);
+
+        if(dueDate.before(currentDate))
+        {
+            dueDate.add(Calendar.HOUR_OF_DAY,24);
+        }
+
+        long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+
+        Intent notificationIntent = new Intent( context, MyFirebaseMessagingService. class ) ;
+        PendingIntent pendingIntent = PendingIntent. getBroadcast ( context, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT ) ;
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context. ALARM_SERVICE ) ;
+        assert alarmManager != null;
+        SharedPrefsHelper sharedPrefsHelper = new SharedPrefsHelper(context);
+        if(sharedPrefsHelper.getNotification()) {
+            Log.d("scheduleNotification", "onReceive: ");
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeDiff, pendingIntent);
+            Log.d("timediff", "scheduleNotification: 2 " + timeDiff);
+        }
     }
 
     private RemoteViews getCustomDesign(Context context,String title,
@@ -103,7 +137,7 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
         PendingIntent pendingIntent
                 = PendingIntent.getActivity(
                 context, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_ONE_SHOT|PendingIntent.FLAG_IMMUTABLE);
 
 
         NotificationCompat.Builder builder

@@ -88,9 +88,9 @@ public class RestaurantRepository {
                     mRestaurantList.add(restaurant);
                 }
                 mutableLiveData.setValue(mRestaurantList);
-                if (!Objects.equals(response.body().next_page_token, null)) {
+                /*if (!Objects.equals(response.body().next_page_token, null)) {
                     getNextPageResults(response.body().next_page_token);
-                }
+                }*/
 
 
             }
