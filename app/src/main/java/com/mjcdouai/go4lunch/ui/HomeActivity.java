@@ -235,14 +235,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if (text.equals(getString(R.string.bottom_navigation_menu_map))) {
 
             mFragmentManager.beginTransaction().hide(mActive).show(mMapFragment).commit();
+            mToolbar.setTitle(R.string.im_hungry);
             mActive = mMapFragment;
             mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(true);
         } else if (text.equals(getString(R.string.bottom_navigation_menu_list))) {
             mFragmentManager.beginTransaction().hide(mActive).show(mListViewFragment).commit();
+            mToolbar.setTitle(R.string.im_hungry);
             mActive = mListViewFragment;
             mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(true);
         } else if (text.equals(getString(R.string.bottom_navigation_menu_workmates))) {
             mFragmentManager.beginTransaction().hide(mActive).show(mWorkmatesFragment).commit();
+            mToolbar.setTitle(R.string.available_workmates);
             mActive = mWorkmatesFragment;
             mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(false);
         }
@@ -266,6 +269,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void configureToolbar() {
         mToolbar = mHomeBinding.homeToolbar;
+        mToolbar.setTitle(R.string.im_hungry);
         setSupportActionBar(mToolbar);
     }
 
@@ -298,8 +302,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         currentDate.setTimeInMillis(System.currentTimeMillis());
         Calendar dueDate = Calendar.getInstance();
         dueDate.setTimeInMillis(System.currentTimeMillis());
-        dueDate.set(Calendar.HOUR_OF_DAY,12);
-        dueDate.set(Calendar.MINUTE,0);
+        dueDate.set(Calendar.HOUR_OF_DAY,15);
+        dueDate.set(Calendar.MINUTE,40);
         dueDate.set(Calendar.SECOND,0);
 
         if(dueDate.before(currentDate))
@@ -310,7 +314,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
         Log.d("timediff", "scheduleNotification: " + timeDiff);
         Intent notificationIntent = new Intent( this, MyFirebaseMessagingService. class ) ;
-        PendingIntent pendingIntent = PendingIntent. getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT ) ;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT ) ;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context. ALARM_SERVICE ) ;
         assert alarmManager != null;
 

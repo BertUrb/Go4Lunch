@@ -16,6 +16,9 @@ public class GooglePlaceDetailsResult {
         @SerializedName("name")
         public String name;
 
+        @SerializedName("rating")
+        public float rating;
+
         @SerializedName("formatted_address")
         public String address;
 

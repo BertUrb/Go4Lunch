@@ -44,9 +44,11 @@
 
             <TextView
                 android:id="@+id/restaurant_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toStartOf="@id/restaurant_stars"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,14 +56,15 @@
                 android:id="@+id/restaurant_stars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/restaurant_name"
                 app:layout_constraintTop_toTopOf="@id/restaurant_name"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/restaurant_name"/>
 
             <TextView
                 android:id="@+id/restaurant_address_and_cuisine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/restaurant_name" />
         </androidx.constraintlayout.widget.ConstraintLayout>

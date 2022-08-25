@@ -65,6 +65,7 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
                     .into(holder.getImage());
         }
         float rating = mRestaurantList.get(position).getRating();
+        Log.d("TAG", "onBindViewHolder : rating adapter : " + rating);
 
         if (rating <= 1) {
             starNumber = 0;

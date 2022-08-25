@@ -196,6 +196,7 @@ public class RestaurantRepository {
                     restaurant.setPhotoReferences(refs);
 
                     restaurant.setWebsite(response.body().result.website);
+                    restaurant.setRating(response.body().result.rating);
                     restaurant.setDetailsLoaded(true);
                     restaurant.setPhone(response.body().result.phone_number);
 

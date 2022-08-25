@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="your_lunch">Votre repas</string>
+    <string name="settings">Paramètres</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="user_full_name">NOM COMPLET</string>
+    <string name="user_mail_string">utilisateur@email.com</string>
+    <string name="open_drawer">Ouvrir</string>
+    <string name="close_drawer">Fermer</string>
+    <string name="open_until">Ouvert jusqu\'a :</string>
+    <string name="bottom_navigation_menu_map">Carte</string>
+    <string name="bottom_navigation_menu_list">Liste</string>
+    <string name="bottom_navigation_menu_workmates">Collègues</string>
+    <string name="submit">Centrer la vue</string>
+    <string name="Open">Ouvert</string>
+    <string name="Close">Fermé</string>
+    <string name="like_btn">J\'aime</string>
+    <string name="call_btn">Appeller</string>
+    <string name="website_btn">Site web</string>
+    <string name="not_decided">n\'a pas encore choisi</string>
+    <string name="choose">mangera chez</string>
+    <string name="choose_notification">Vous avez choisi de manger chez %1$s</string>
+    <string name="workmates_notification">avec : %1$s</string>
+    <string name="delete_btn_text">Effacer votre compte</string>
+    <string name="restaurant_range">Montre les restaurant autour de vous:</string>
+    <string name="meters">%1$d mètres</string>
+    <string name="notification_status_label">Statut des notificatitions</string>
+    <string name="language_settings_label">Langue :</string>
+    <string name="settings_save_button_text">Sauver</string>
+    <string name="search">Rechercher:</string>
+    <string name="im_hungry">J\'ai faim !</string>
+    <string name="available_workmates">Collègues disponibles</string>
+    <string name="phone_call">Autoriser les appels téléphoniques ?</string>
+</resources>

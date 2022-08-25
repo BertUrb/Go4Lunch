@@ -1,11 +1,13 @@
 package com.mjcdouai.go4lunch.ui;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -19,9 +21,12 @@ import com.mjcdouai.go4lunch.model.Workmate;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
@@ -29,6 +34,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     private Workmate mWorkmate;
     private List<Workmate> mWorkmates = new ArrayList<>();
     private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +66,15 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         if (!Objects.equals(restaurant.getPhone(), null) && !Objects.equals(restaurant.getPhone(), "none")) {
             mBinding.callBtn.setOnClickListener(view -> {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + restaurant.getPhone().replaceAll(" ", "")));
-                startActivity(callIntent);
+                String[] perms = {Manifest.permission.CALL_PHONE};
+                if(!EasyPermissions.hasPermissions(this,perms))
+                {
+                    EasyPermissions.requestPermissions(this,getString(R.string.phone_call),1,perms);
+                }
+                else {
+                    callIntent.setData(Uri.parse("tel:" + restaurant.getPhone().replaceAll(" ", "")));
+                    startActivity(callIntent);
+                }
             });
         } else {
             mBinding.callBtn.setEnabled(false);
@@ -92,6 +110,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         }
 
         float rating = restaurant.getRating();
+        Log.d("TAG", "rating: " + rating);
         float starNumber;
 
         if (rating <= 1) {
@@ -105,6 +124,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         }
         StringBuilder stars = new StringBuilder();
         char star = 0x2B50;
+
+        Log.d("TAG", "starNumber: " + starNumber);
+
 
 
         for (int i = 0; i < starNumber; i++) {

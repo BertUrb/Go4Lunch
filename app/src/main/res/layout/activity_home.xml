@@ -19,7 +19,7 @@
             android:id="@+id/home_toolbar"
             android:theme="@style/ToolBarStyle"
             app:titleTextColor="@android:color/white"
-            android:background="@color/colorPrimary"
+            android:background="@color/my_orange"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

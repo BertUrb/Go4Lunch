@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -207,6 +208,7 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
     public boolean onMarkerClick(Marker marker, MapView mapView) {
         Intent restaurantDetails = new Intent(getContext(), RestaurantDetailsActivity.class);
         mRestaurantsViewModel.loadRestaurantDetails(marker.getId()).observe(getViewLifecycleOwner(), restaurant -> {
+            Log.d("TAG", "onMarkerClick: rating " + restaurant.getRating());
             restaurantDetails.putExtra("Restaurant", restaurant);
             GeoPoint geoPoint = new GeoPoint(restaurant.getLatitude(),restaurant.getLongitude());
             mMapController.animateTo(geoPoint);
