@@ -10,10 +10,10 @@ import java.util.Objects;
 
 public class Restaurant implements Parcelable {
     private String mName;
-    private String mAddress;
+    private final String mAddress;
     private boolean mIsOpen;
-    private double mLatitude;
-    private double mLongitude;
+    private final double mLatitude;
+    private final double mLongitude;
     private String mWebsite;
     private boolean mLiked;
     private boolean mChosen;
@@ -98,20 +98,8 @@ public class Restaurant implements Parcelable {
         mName = name;
     }
 
-    public void setAddress(String address) {
-        mAddress = address;
-    }
-
     public void setOpen(boolean open) {
         mIsOpen = open;
-    }
-
-    public void setLatitude(double latitude) {
-        mLatitude = latitude;
-    }
-
-    public void setLongitude(double longitude) {
-        mLongitude = longitude;
     }
 
     public void setWebsite(String website) {
@@ -120,10 +108,6 @@ public class Restaurant implements Parcelable {
 
     public void setLiked(boolean liked) {
         mLiked = liked;
-    }
-
-    public void setChosen(boolean chosen) {
-        mChosen = chosen;
     }
 
     public void setPhone(String phone) {
@@ -156,10 +140,6 @@ public class Restaurant implements Parcelable {
 
     public boolean isLiked() {
         return mLiked;
-    }
-
-    public boolean isChosen() {
-        return mChosen;
     }
 
     public String getPhone() {

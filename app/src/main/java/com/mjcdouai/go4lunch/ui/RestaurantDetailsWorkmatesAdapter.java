@@ -14,7 +14,7 @@ import java.util.List;
 
 public class RestaurantDetailsWorkmatesAdapter extends RecyclerView.Adapter<RestaurantDetailsWorkmatesViewHolder> {
 
-   private List<Workmate> mWorkmatesList;
+   private final List<Workmate> mWorkmatesList;
    private WorkmatesItemListBinding mBinding;
 
     public RestaurantDetailsWorkmatesAdapter(List<Workmate> workmatesList) {

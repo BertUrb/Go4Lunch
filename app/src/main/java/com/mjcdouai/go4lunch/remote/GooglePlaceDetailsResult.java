@@ -49,29 +49,5 @@ public class GooglePlaceDetailsResult {
             public String photo_reference;
 
         }
-
-
-        @SerializedName("opening_hours")
-        public OpeningHours openingHours = new OpeningHours();
-
-
-        public static class OpeningHours{
-            @SerializedName("periods")
-            public List<Period> periods;
-
-            public static class Period{
-                @SerializedName("close")
-                public Close close = new Close();
-
-                public static class Close {
-                    @SerializedName("day")
-                    public int day;
-
-                    @SerializedName("time")
-                    public String time;
-                }
-            }
-
-        }
     }
 }

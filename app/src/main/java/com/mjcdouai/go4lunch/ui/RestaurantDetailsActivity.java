@@ -21,7 +21,6 @@ import com.mjcdouai.go4lunch.model.Workmate;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

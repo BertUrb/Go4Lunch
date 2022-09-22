@@ -12,12 +12,15 @@
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/activity_restaurant_details.xml" value="0.2" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/activity_settings.xml" value="0.264" />
+        <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/fragment_chat.xml" value="0.24635416666666668" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/fragment_list_view.xml" value="0.264" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/fragment_map.xml" value="0.25" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/fragment_workmates.xml" value="0.10989583333333333" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/home_activity_nav_header.xml" value="0.1109375" />
+        <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/message.xml" value="0.1734375" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/notification.xml" value="0.25" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/restaurant_item_list.xml" value="0.10989583333333333" />
+        <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/layout/workmates_item_list.xml" value="0.1734375" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.25" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/menu/home_activity_menu_drawer.xml" value="0.25" />
         <entry key="..\:/docs/Go4Lunch-Bon/app/src/main/res/menu/menu_toolbar.xml" value="0.14635416666666667" />

@@ -1,12 +1,9 @@
 package com.mjcdouai.go4lunch.ui;
 
-import android.media.Image;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
@@ -14,7 +11,7 @@ import com.mjcdouai.go4lunch.databinding.RestaurantItemListBinding;
 
 public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     private final RestaurantItemListBinding mBinding;
-    private OnClickRestaurantListener mOnClickRestaurantListener;
+    private final OnClickRestaurantListener mOnClickRestaurantListener;
     public RestaurantViewHolder(RestaurantItemListBinding binding, OnClickRestaurantListener onClickRestaurantListener) {
         super(binding.getRoot());
         mOnClickRestaurantListener = onClickRestaurantListener;
@@ -57,8 +54,6 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder implements Vie
 
     @Override
     public void onClick(View view) {
-        mOnClickRestaurantListener.onRestaurantClick(getAdapterPosition());
-        Log.d("TAG", "onClick: ");
-
+        mOnClickRestaurantListener.onRestaurantClick(getBindingAdapterPosition());
     }
 }

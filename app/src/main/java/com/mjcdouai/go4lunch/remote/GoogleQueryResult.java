@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GoogleQueryResult {
     @SerializedName("results")
-    public List<Result> results = new ArrayList();
+    public List<Result> results = new ArrayList<>();
 
     @SerializedName("next_page_token")
     public String next_page_token;
@@ -17,9 +17,6 @@ public class GoogleQueryResult {
 
 
     public static class Result {
-
-        @SerializedName("business_status")
-        public String business_status;
 
         @SerializedName("name")
         public String name;

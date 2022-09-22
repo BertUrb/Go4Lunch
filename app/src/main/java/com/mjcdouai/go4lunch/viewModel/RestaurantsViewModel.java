@@ -1,14 +1,12 @@
 package com.mjcdouai.go4lunch.viewModel;
 
 import android.location.Location;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.repository.RestaurantRepository;
-import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 
 import java.util.List;
 
@@ -58,9 +56,6 @@ public class RestaurantsViewModel extends ViewModel {
         }
     }
 
-    public int getTabIndex(String restaurantId) {
-        return mRestaurantRepository.getTabIndex(restaurantId);
-    }
 
 
 }

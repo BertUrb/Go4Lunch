@@ -44,6 +44,7 @@ import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivityHomeBinding;
 import com.mjcdouai.go4lunch.manager.UserManager;
 import com.mjcdouai.go4lunch.remote.MyFirebaseMessagingService;
+import com.mjcdouai.go4lunch.ui.fragment.ChatFragment;
 import com.mjcdouai.go4lunch.ui.fragment.ListViewFragment;
 import com.mjcdouai.go4lunch.ui.fragment.MapFragment;
 import com.mjcdouai.go4lunch.ui.fragment.WorkmatesFragment;
@@ -64,8 +65,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private ActivityHomeBinding mHomeBinding;
 
+
+
     private Fragment mMapFragment;
     private Fragment mListViewFragment;
+    private Fragment mChatFragment;
     private final Fragment mWorkmatesFragment = new WorkmatesFragment();
     final FragmentManager mFragmentManager = getSupportFragmentManager();
     private Fragment mActive = mMapFragment;
@@ -137,8 +141,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mMapFragment = MapFragment.newInstance(mRestaurantsViewModel, chosenRestaurantIds);
             mActive = mMapFragment;
             mListViewFragment = ListViewFragment.newInstance();
+            mChatFragment = ChatFragment.newInstance();
             setContentView(mHomeBinding.getRoot());
 
+            mFragmentManager.beginTransaction().add(R.id.main_content,mChatFragment,"4").hide(mChatFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mMapFragment, "1").commit();
@@ -248,7 +254,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mToolbar.setTitle(R.string.available_workmates);
             mActive = mWorkmatesFragment;
             mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(false);
+        } else if(text.equals(getString(R.string.bottom_navigation_menu_chat))) {
+            mFragmentManager.beginTransaction().hide(mActive).show(mChatFragment).commit();
+            mToolbar.setTitle(R.string.bottom_navigation_menu_chat);
+            mActive = mChatFragment;
+            mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(false);
         }
+
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
 
@@ -312,9 +324,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
 
         long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-        Log.d("timediff", "scheduleNotification: " + timeDiff);
         Intent notificationIntent = new Intent( this, MyFirebaseMessagingService. class ) ;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT ) ;
+        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT |PendingIntent.FLAG_IMMUTABLE ) ;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context. ALARM_SERVICE ) ;
         assert alarmManager != null;
 

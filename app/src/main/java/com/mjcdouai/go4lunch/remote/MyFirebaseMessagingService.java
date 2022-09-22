@@ -13,7 +13,6 @@ import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 
-import com.facebook.share.Share;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mjcdouai.go4lunch.R;
@@ -101,14 +100,12 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
         long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
 
         Intent notificationIntent = new Intent( context, MyFirebaseMessagingService. class ) ;
-        PendingIntent pendingIntent = PendingIntent. getBroadcast ( context, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT ) ;
+        PendingIntent pendingIntent = PendingIntent. getBroadcast ( context, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE ) ;
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context. ALARM_SERVICE ) ;
         assert alarmManager != null;
         SharedPrefsHelper sharedPrefsHelper = new SharedPrefsHelper(context);
         if(sharedPrefsHelper.getNotification()) {
-            Log.d("scheduleNotification", "onReceive: ");
             alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeDiff, pendingIntent);
-            Log.d("timediff", "scheduleNotification: 2 " + timeDiff);
         }
     }
 

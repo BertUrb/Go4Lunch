@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mjcdouai.go4lunch.databinding.WorkmatesItemListBinding;
 
 public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
-    private WorkmatesItemListBinding mBinding;
+    private final WorkmatesItemListBinding mBinding;
 
     public WorkmatesViewHolder(WorkmatesItemListBinding binding) {
         super(binding.getRoot());

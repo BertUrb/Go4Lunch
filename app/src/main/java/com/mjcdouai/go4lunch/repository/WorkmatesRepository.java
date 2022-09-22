@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mjcdouai.go4lunch.manager.UserManager;
@@ -28,13 +27,13 @@ public class WorkmatesRepository {
 
     private List<String> mFavRestaurantList = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
     public  void initFavRestaurantList() {
         mFavRestaurantList = new ArrayList<>();
         UserManager userManager = UserManager.getInstance();
-        db.collection(COLLECTION_WORKMATES).document(userManager.getCurrentUser().getEmail()).get().addOnCompleteListener(task -> {
-           mFavRestaurantList = (List<String>) task.getResult().get("favRestaurants");
-            Log.d("TAG", "initFavRestaurantList: done");
-        });
+        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail()))
+                .get()
+                .addOnCompleteListener(task -> mFavRestaurantList = (List<String>) task.getResult().get("favRestaurants"));
 
 
     }
@@ -81,7 +80,7 @@ public class WorkmatesRepository {
 
 
 
-        db.collection(COLLECTION_WORKMATES).document(userManager.getCurrentUser().getEmail()).set(favMap).addOnCompleteListener(task -> {
+        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).set(favMap).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.d("TAG", "onComplete error: " + task.getException());
             }
@@ -180,7 +179,7 @@ public class WorkmatesRepository {
         Map<String,Object> favMap = new HashMap<>();
         favMap.put("favRestaurants",mFavRestaurantList);
 
-        db.collection(COLLECTION_WORKMATES).document(userManager.getCurrentUser().getEmail()).set(favMap).addOnCompleteListener(task -> {
+        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).set(favMap).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.d("TAG", "onComplete error: " + task.getException());
             }
@@ -201,7 +200,7 @@ public class WorkmatesRepository {
         LocalDate date = LocalDate.now();
         MutableLiveData<String> result = new MutableLiveData<>();
 
-        db.collection(COLLECTION_WORKMATES).document(UserManager.getInstance().getCurrentUser().getEmail()).get().addOnCompleteListener(task -> {
+        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(UserManager.getInstance().getCurrentUser().getEmail())).get().addOnCompleteListener(task -> {
             if(Objects.requireNonNull(task.getResult().getString("date")).equals(date.toString()))
             {
                 String res;

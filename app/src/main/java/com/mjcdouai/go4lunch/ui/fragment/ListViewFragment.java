@@ -33,7 +33,7 @@ import java.util.List;
 public class ListViewFragment extends Fragment implements OnClickRestaurantListener {
 
     private FragmentListViewBinding mBinding;
-    private RestaurantsViewModel mRestaurantsViewModel = RestaurantsViewModel.getInstance();
+    private final RestaurantsViewModel mRestaurantsViewModel = RestaurantsViewModel.getInstance();
     private List<Restaurant> mRestaurantList;
     private List<String> mChosenRestaurantIds;
     private Location mLocation;
@@ -45,8 +45,7 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
     }
 
     public static ListViewFragment newInstance() {
-        ListViewFragment listViewFragment = new ListViewFragment();
-        return listViewFragment;
+        return new ListViewFragment();
     }
 
     @Override

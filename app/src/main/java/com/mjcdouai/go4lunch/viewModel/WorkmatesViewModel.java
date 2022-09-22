@@ -1,7 +1,5 @@
 package com.mjcdouai.go4lunch.viewModel;
 
-import android.os.AsyncTask;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -63,13 +61,6 @@ public class WorkmatesViewModel extends ViewModel {
     public void removeFavoriteRestaurant(Restaurant restaurant) {
         mWorkmatesRepository.removeFavoriteRestaurant(restaurant);
     }
-
-    public boolean isFavoriteRestaurant(String restaurantId) {
-       return mWorkmatesRepository.isFavoriteRestaurant(restaurantId);
-    }
-
-
-
 
 
 }

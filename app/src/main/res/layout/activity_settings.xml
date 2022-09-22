@@ -51,7 +51,6 @@
         android:paddingBottom="30dp"/>
 
     <androidx.appcompat.widget.SwitchCompat
-        android:labelFor="@id/language_spinner"
         android:id="@+id/notification_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,33 +58,14 @@
         app:layout_constraintStart_toEndOf="@id/notification_switch_label"
         app:layout_constraintTop_toBottomOf="@id/range_picker" />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:textSize="15sp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/notification_switch_label"
-        app:layout_constraintStart_toEndOf="@id/language_spinner_label"
-        android:entries="@array/language_array"
-        android:id="@+id/language_spinner"
-        android:paddingBottom="30dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/language_spinner_label"
-        android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/notification_switch_label"
-        android:text="@string/language_settings_label"
-        />
-
     <Button
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/language_spinner"
+        app:layout_constraintTop_toBottomOf="@id/notification_switch"
         android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/settings_save_button_text" />
+        android:text="@string/settings_save_button_text"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="170dp" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

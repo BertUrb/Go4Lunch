@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -18,27 +17,26 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class LocationHelper implements LocationListener {
 
     private Location mLocation;
-    private LocationManager mLocationManager;
-    private MutableLiveData<Location> mLocationMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Location> mLocationMutableLiveData = new MutableLiveData<>();
 
     public LocationHelper(Activity host, Context context)
     {
 
-         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             String[] perms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
             EasyPermissions.requestPermissions(host, "test", 55, perms);
 
         }
-        mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (mLocation == null) {
-            mLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            mLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
 
         if (mLocation == null) {
-            mLocation = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            mLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         }
 
         if(mLocation == null) {
@@ -49,7 +47,7 @@ public class LocationHelper implements LocationListener {
             mLocation.setLongitude(lg);
         }
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, (LocationListener) this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, (LocationListener) this);
 
 
     }

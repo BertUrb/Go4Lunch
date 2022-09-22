@@ -32,4 +32,6 @@
     <string name="im_hungry">J\'ai faim !</string>
     <string name="available_workmates">Collègues disponibles</string>
     <string name="phone_call">Autoriser les appels téléphoniques ?</string>
+    <string name="bottom_navigation_menu_chat">Chat en direct</string>
+    <string name="your_message">Votre message</string>
 </resources>
