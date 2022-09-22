@@ -9,22 +9,28 @@ import java.util.List;
 import java.util.Objects;
 
 public class Restaurant implements Parcelable {
-    private String mName;
+    public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
+        @Override
+        public Restaurant createFromParcel(Parcel in) {
+            return new Restaurant(in);
+        }
+
+        @Override
+        public Restaurant[] newArray(int size) {
+            return new Restaurant[size];
+        }
+    };
     private final String mAddress;
-    private boolean mIsOpen;
     private final double mLatitude;
     private final double mLongitude;
+    private final String mId;
+    private String mName;
+    private boolean mIsOpen;
     private String mWebsite;
     private boolean mLiked;
     private boolean mChosen;
     private String mPhone;
     private boolean mDetailsLoaded;
-
-    public String getId() {
-        return mId;
-    }
-
-    private final String mId;
     private List<String> mPhotoReferences;
     private float mRating;
 
@@ -44,17 +50,19 @@ public class Restaurant implements Parcelable {
         mRating = in.readFloat();
     }
 
-    public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
-        @Override
-        public Restaurant createFromParcel(Parcel in) {
-            return new Restaurant(in);
-        }
+    public Restaurant(String id, String name, String address, boolean isOpen, double latitude, double longitude) {
+        mId = id;
+        mName = name;
+        mAddress = address;
+        this.mIsOpen = isOpen;
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mDetailsLoaded = false;
+    }
 
-        @Override
-        public Restaurant[] newArray(int size) {
-            return new Restaurant[size];
-        }
-    };
+    public String getId() {
+        return mId;
+    }
 
     public float getRating() {
         return mRating;
@@ -64,8 +72,6 @@ public class Restaurant implements Parcelable {
         mRating = rating;
     }
 
-
-
     public List<String> getPhotoReferences() {
         return mPhotoReferences;
     }
@@ -74,48 +80,20 @@ public class Restaurant implements Parcelable {
         mPhotoReferences = photoReferences;
     }
 
-
-
-    public Restaurant(String id,String name, String address, boolean isOpen, double latitude, double longitude) {
-        mId=id;
-        mName = name;
-        mAddress = address;
-        this.mIsOpen = isOpen;
-        mLatitude = latitude;
-        mLongitude = longitude;
-        mDetailsLoaded=false;
+    public boolean getDetailsLoaded() {
+        return mDetailsLoaded;
     }
 
     public void setDetailsLoaded(boolean detailsLoaded) {
         mDetailsLoaded = detailsLoaded;
     }
 
-    public boolean getDetailsLoaded(){
-        return mDetailsLoaded;
+    public String getName() {
+        return mName;
     }
 
     public void setName(String name) {
         mName = name;
-    }
-
-    public void setOpen(boolean open) {
-        mIsOpen = open;
-    }
-
-    public void setWebsite(String website) {
-        mWebsite = website;
-    }
-
-    public void setLiked(boolean liked) {
-        mLiked = liked;
-    }
-
-    public void setPhone(String phone) {
-        mPhone = phone;
-    }
-
-    public String getName() {
-        return mName;
     }
 
     public String getAddress() {
@@ -124,6 +102,10 @@ public class Restaurant implements Parcelable {
 
     public boolean isOpen() {
         return mIsOpen;
+    }
+
+    public void setOpen(boolean open) {
+        mIsOpen = open;
     }
 
     public double getLatitude() {
@@ -138,14 +120,25 @@ public class Restaurant implements Parcelable {
         return mWebsite;
     }
 
+    public void setWebsite(String website) {
+        mWebsite = website;
+    }
+
     public boolean isLiked() {
         return mLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        mLiked = liked;
     }
 
     public String getPhone() {
         return mPhone;
     }
 
+    public void setPhone(String phone) {
+        mPhone = phone;
+    }
 
     @Override
     public int describeContents() {

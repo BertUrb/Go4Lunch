@@ -48,14 +48,11 @@ import java.util.Objects;
  */
 public class MapFragment extends Fragment implements Marker.OnMarkerClickListener {
 
+    private static List<String> mChosenRestaurantIds;
+    private final List<GeoPoint> mLoadedLocations = new ArrayList<>();
     private MapView mMap;
     private IMapController mMapController;
     private Location mLocation;
-    private final List<GeoPoint> mLoadedLocations = new ArrayList<>();
-    private static List<String> mChosenRestaurantIds;
-
-
-
     private RestaurantsViewModel mRestaurantsViewModel;
 
     public MapFragment() {
@@ -98,7 +95,7 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         locationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), this::locationObserver);
         mLocation = locationHelper.getLocation();
         int radius = new SharedPrefsHelper(requireContext()).getRadius();
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation, radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         GeoPoint startPosition = new GeoPoint(mLocation.getLatitude(), mLocation.getLongitude());
 
@@ -122,14 +119,11 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         createChosenRestaurantList();
 
 
-
         mMapController.setCenter(startPosition);
 
 
         FloatingActionButton fab = mapBinding.fabCenterView;
         fab.setOnClickListener(this::onFabClick);
-
-
 
 
         return view;
@@ -147,11 +141,9 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
             mLoadedLocations.add(geoPoint);
             int radius = new SharedPrefsHelper(requireContext()).getRadius();
-            mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
+            mRestaurantsViewModel.loadRestaurantNearby(mLocation, radius).observe(getViewLifecycleOwner(), this::getRestaurantObserver);
 
         }
-
-
 
 
     }
@@ -187,7 +179,7 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
 
         Drawable d = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_noun_restaurant_map_marker_24);
-        if (getWorkmateCountIn(restaurant.getId()) > 0 ) {
+        if (getWorkmateCountIn(restaurant.getId()) > 0) {
             Objects.requireNonNull(d).setTint(Color.GREEN);
         } else {
             Objects.requireNonNull(d).setTint(Color.RED);
@@ -210,11 +202,16 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
         mRestaurantsViewModel.loadRestaurantDetails(marker.getId()).observe(getViewLifecycleOwner(), restaurant -> {
             Log.d("TAG", "onMarkerClick: rating " + restaurant.getRating());
             restaurantDetails.putExtra("Restaurant", restaurant);
-            GeoPoint geoPoint = new GeoPoint(restaurant.getLatitude(),restaurant.getLongitude());
+            GeoPoint geoPoint = new GeoPoint(restaurant.getLatitude(), restaurant.getLongitude());
             mMapController.animateTo(geoPoint);
             startActivity(restaurantDetails);
         });
         return false;
+    }
+
+    public void moveTo(LatLng moveTo) {
+        GeoPoint geoPoint = new GeoPoint(moveTo.latitude, moveTo.longitude);
+        mMapController.animateTo(geoPoint);
     }
 
     private static class MyMarker extends Marker {
@@ -230,9 +227,5 @@ public class MapFragment extends Fragment implements Marker.OnMarkerClickListene
 
 
         }
-    }
-    public void moveTo(LatLng moveTo) {
-        GeoPoint geoPoint = new GeoPoint(moveTo.latitude,moveTo.longitude);
-        mMapController.animateTo(geoPoint);
     }
 }

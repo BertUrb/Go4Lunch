@@ -20,27 +20,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RestaurantRepository {
-    private final GoogleApi mGoogleApi = GoogleApi.retrofit.create(GoogleApi.class);
     private static final String KEY = BuildConfig.GMAP_API_KEY;
+    private static volatile RestaurantRepository instance;
+    private final GoogleApi mGoogleApi = GoogleApi.retrofit.create(GoogleApi.class);
     private final List<Restaurant> mRestaurantList = new ArrayList<>();
     MutableLiveData<List<Restaurant>> mutableLiveData = new MutableLiveData<>();
 
-    private static volatile RestaurantRepository instance;
-
     private RestaurantRepository() {
-    }
-
-    public void likeRestaurant(Restaurant restaurant) {
-        if(mRestaurantList.contains(restaurant)) {
-            mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
-        }
-    }
-
-    public void unlikeRestaurant(Restaurant restaurant) {
-        if(mRestaurantList.contains(restaurant)) {
-            mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(false);
-
-        }
     }
 
     public static RestaurantRepository getInstance() {
@@ -53,6 +39,19 @@ public class RestaurantRepository {
                 instance = new RestaurantRepository();
             }
             return instance;
+        }
+    }
+
+    public void likeRestaurant(Restaurant restaurant) {
+        if (mRestaurantList.contains(restaurant)) {
+            mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(true);
+        }
+    }
+
+    public void unlikeRestaurant(Restaurant restaurant) {
+        if (mRestaurantList.contains(restaurant)) {
+            mRestaurantList.get(mRestaurantList.indexOf(restaurant)).setLiked(false);
+
         }
     }
 
@@ -136,7 +135,7 @@ public class RestaurantRepository {
                             response.body().result.geometry.location.lng);
 
                     List<String> refs = new ArrayList<>();
-                    for(GooglePlaceDetailsResult.Result.Photos photo : response.body().result.photos) {
+                    for (GooglePlaceDetailsResult.Result.Photos photo : response.body().result.photos) {
                         refs.add(photo.photo_reference);
                     }
                     restaurant.setPhotoReferences(refs);

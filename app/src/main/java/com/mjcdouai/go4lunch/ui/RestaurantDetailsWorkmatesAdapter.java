@@ -14,8 +14,8 @@ import java.util.List;
 
 public class RestaurantDetailsWorkmatesAdapter extends RecyclerView.Adapter<RestaurantDetailsWorkmatesViewHolder> {
 
-   private final List<Workmate> mWorkmatesList;
-   private WorkmatesItemListBinding mBinding;
+    private final List<Workmate> mWorkmatesList;
+    private WorkmatesItemListBinding mBinding;
 
     public RestaurantDetailsWorkmatesAdapter(List<Workmate> workmatesList) {
         mWorkmatesList = workmatesList;
@@ -24,7 +24,7 @@ public class RestaurantDetailsWorkmatesAdapter extends RecyclerView.Adapter<Rest
     @NonNull
     @Override
     public RestaurantDetailsWorkmatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mBinding = WorkmatesItemListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
+        mBinding = WorkmatesItemListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new RestaurantDetailsWorkmatesViewHolder(mBinding);
     }
 

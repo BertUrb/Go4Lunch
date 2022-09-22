@@ -37,7 +37,7 @@
     <string name="available_workmates">Available workmates</string>
     <string name="phone_call">Allow phone call ?</string>
     <string name="bottom_navigation_menu_chat">Live chat</string>
-    <string name="your_message" >Your message</string>
+    <string name="your_message">Your message</string>
 
 
     <string-array name="language_array">

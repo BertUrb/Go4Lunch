@@ -16,13 +16,11 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         mBinding = binding;
     }
 
-    public ImageView getWorkmateProfilePictureImageView()
-    {
+    public ImageView getWorkmateProfilePictureImageView() {
         return mBinding.workmatesProfilePicture;
     }
 
-    public TextView getWorkmateNameTextView()
-    {
+    public TextView getWorkmateNameTextView() {
         return mBinding.workmatesName;
     }
 }

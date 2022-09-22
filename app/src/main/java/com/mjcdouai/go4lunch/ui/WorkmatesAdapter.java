@@ -15,21 +15,21 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder>{
+public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> {
 
     private final List<WorkmateWithRestaurantName> mWorkmatesWithRestaurants;
     WorkmatesItemListBinding mBinding;
 
     public WorkmatesAdapter(List<WorkmateWithRestaurantName> workmatesWithRestaurants) {
-       mWorkmatesWithRestaurants = workmatesWithRestaurants;
+        mWorkmatesWithRestaurants = workmatesWithRestaurants;
 
     }
 
     @NonNull
     @Override
     public WorkmatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mBinding = WorkmatesItemListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
-    return new WorkmatesViewHolder(mBinding);
+        mBinding = WorkmatesItemListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new WorkmatesViewHolder(mBinding);
     }
 
     @Override
@@ -42,15 +42,14 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder>{
         String text = mWorkmatesWithRestaurants.get(position).mWorkmate.getName() + " ";
         LocalDate date = LocalDate.now();
 
-        if(!Objects.equals(mWorkmatesWithRestaurants.get(position).mWorkmate.getDate(), date.toString())){
-            mWorkmatesWithRestaurants.get(position).mRestaurantName =  mBinding.getRoot().getResources().getString(R.string.not_decided);
+        if (!Objects.equals(mWorkmatesWithRestaurants.get(position).mWorkmate.getDate(), date.toString())) {
+            mWorkmatesWithRestaurants.get(position).mRestaurantName = mBinding.getRoot().getResources().getString(R.string.not_decided);
         }
 
 
-        if(Objects.equals(mWorkmatesWithRestaurants.get(position).mRestaurantName, mBinding.getRoot().getResources().getString(R.string.not_decided))) {
+        if (Objects.equals(mWorkmatesWithRestaurants.get(position).mRestaurantName, mBinding.getRoot().getResources().getString(R.string.not_decided))) {
             text += mBinding.getRoot().getResources().getString(R.string.not_decided);
-        }
-        else {
+        } else {
             text += mBinding.getRoot().getResources().getString(R.string.choose)
                     + " "
                     + mWorkmatesWithRestaurants.get(position).mRestaurantName;

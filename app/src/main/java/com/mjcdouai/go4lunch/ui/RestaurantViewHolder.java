@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mjcdouai.go4lunch.callback.OnClickRestaurantListener;
 import com.mjcdouai.go4lunch.databinding.RestaurantItemListBinding;
 
-public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private final RestaurantItemListBinding mBinding;
     private final OnClickRestaurantListener mOnClickRestaurantListener;
+
     public RestaurantViewHolder(RestaurantItemListBinding binding, OnClickRestaurantListener onClickRestaurantListener) {
         super(binding.getRoot());
         mOnClickRestaurantListener = onClickRestaurantListener;
@@ -19,23 +20,19 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder implements Vie
         mBinding.getRoot().setOnClickListener(this);
     }
 
-    public TextView getName()
-    {
+    public TextView getName() {
         return mBinding.restaurantName;
     }
 
-    public TextView getAddress()
-    {
+    public TextView getAddress() {
         return mBinding.restaurantAddress;
     }
 
-    public TextView getOpenUntil()
-    {
+    public TextView getOpenUntil() {
         return mBinding.restaurantOpenUntil;
     }
 
-    public ImageView getImage()
-    {
+    public ImageView getImage() {
         return mBinding.restaurantImage;
     }
 
@@ -43,12 +40,11 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder implements Vie
         return mBinding.restaurantDistance;
     }
 
-    public TextView getWorkmatesCount()
-    {
+    public TextView getWorkmatesCount() {
         return mBinding.workmatesCount;
     }
-    public TextView getStars()
-    {
+
+    public TextView getStars() {
         return mBinding.stars;
     }
 

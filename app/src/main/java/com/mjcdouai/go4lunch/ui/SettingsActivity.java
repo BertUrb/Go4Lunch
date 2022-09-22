@@ -12,6 +12,7 @@ import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
 public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
     private ActivitySettingsBinding mBinding;
+
     protected void onCreate(Bundle savedInstanceState) {
         mBinding = ActivitySettingsBinding.inflate(getLayoutInflater());
         super.onCreate(savedInstanceState);
@@ -20,7 +21,7 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
         mBinding.rangePicker.setProgress(sharedPrefsHelper.getRadius());
         mBinding.notificationSwitch.setChecked(sharedPrefsHelper.getNotification());
         mBinding.rangePicker.setKeyProgressIncrement(100);
-        mBinding.rangeNumber.setText(getString(R.string.meters,mBinding.rangePicker.getProgress()));
+        mBinding.rangeNumber.setText(getString(R.string.meters, mBinding.rangePicker.getProgress()));
 
         mBinding.rangePicker.setOnSeekBarChangeListener(this);
         mBinding.saveButton.setOnClickListener(view -> {
@@ -33,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        mBinding.rangeNumber.setText(getString(R.string.meters,i));
+        mBinding.rangeNumber.setText(getString(R.string.meters, i));
 
     }
 

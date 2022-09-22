@@ -32,8 +32,7 @@ public class WorkmatesFragment extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden)
-        {
+        if (!hidden) {
             mWorkmatesViewModel.getAllWorkmatesWithRestaurantNames()
                     .observe(getViewLifecycleOwner(),
                             workmateWithRestaurantNames -> mBinding.workmatesRecyclerview.setAdapter(new WorkmatesAdapter(workmateWithRestaurantNames)));
@@ -44,7 +43,7 @@ public class WorkmatesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentWorkmatesBinding.inflate(inflater,container,false);
+        mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
 
 
         return mBinding.getRoot();

@@ -13,14 +13,15 @@ public class UserRepository {
 
     private static volatile UserRepository instance;
 
-    private UserRepository() { }
+    private UserRepository() {
+    }
 
     public static UserRepository getInstance() {
         UserRepository result = instance;
         if (result != null) {
             return result;
         }
-        synchronized(UserRepository.class) {
+        synchronized (UserRepository.class) {
             if (instance == null) {
                 instance = new UserRepository();
             }
@@ -29,17 +30,17 @@ public class UserRepository {
 
 
     }
+
     @Nullable
-    public FirebaseUser getCurrentUser()
-    {
+    public FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public Task<Void> signOut(Context context){
+    public Task<Void> signOut(Context context) {
         return AuthUI.getInstance().signOut(context);
     }
 
-    public Task<Void> deleteUser(Context context){
+    public Task<Void> deleteUser(Context context) {
         return AuthUI.getInstance().delete(context);
     }
 }

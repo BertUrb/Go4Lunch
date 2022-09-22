@@ -11,8 +11,7 @@ public class RestaurantTest {
     private Restaurant mRestaurant;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         mRestaurant = new Restaurant("restaurantId",
                 "restaurantName",
                 "restaurantAddress",
@@ -23,17 +22,17 @@ public class RestaurantTest {
 
     @Test
     public void getIdWithSuccess() {
-        Assert.assertEquals("restaurantId",mRestaurant.getId());
+        Assert.assertEquals("restaurantId", mRestaurant.getId());
     }
 
     @Test
     public void getNameWithSuccess() {
-        Assert.assertEquals("restaurantName",mRestaurant.getName());
+        Assert.assertEquals("restaurantName", mRestaurant.getName());
     }
 
     @Test
     public void getAddressWithSuccess() {
-        Assert.assertEquals("restaurantAddress",mRestaurant.getAddress());
+        Assert.assertEquals("restaurantAddress", mRestaurant.getAddress());
     }
 
     @Test
@@ -43,11 +42,11 @@ public class RestaurantTest {
 
     @Test
     public void getLongitudeWithSuccess() {
-        Assert.assertEquals(30,mRestaurant.getLongitude(),0);
+        Assert.assertEquals(30, mRestaurant.getLongitude(), 0);
     }
 
     @Test
     public void getLatitudeWithSuccess() {
-        Assert.assertEquals(20,mRestaurant.getLatitude(),0);
+        Assert.assertEquals(20, mRestaurant.getLatitude(), 0);
     }
 }

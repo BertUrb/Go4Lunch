@@ -21,14 +21,28 @@ import java.util.Objects;
 
 public class WorkmatesRepository {
 
+    private static final String COLLECTION_WORKMATES = "workmates";
     private static volatile WorkmatesRepository instance;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static final String COLLECTION_WORKMATES = "workmates";
-
     private List<String> mFavRestaurantList = new ArrayList<>();
 
+    public static WorkmatesRepository getInstance() {
+        WorkmatesRepository result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized (UserRepository.class) {
+            if (instance == null) {
+                instance = new WorkmatesRepository();
+            }
+            return instance;
+        }
+
+
+    }
+
     @SuppressWarnings("unchecked")
-    public  void initFavRestaurantList() {
+    public void initFavRestaurantList() {
         mFavRestaurantList = new ArrayList<>();
         UserManager userManager = UserManager.getInstance();
         db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail()))
@@ -37,7 +51,6 @@ public class WorkmatesRepository {
 
 
     }
-
 
     public void insertWorkmate(Workmate workmate, String restaurantName) {
         Map<String, Object> workmateMap = new HashMap<>();
@@ -49,6 +62,7 @@ public class WorkmatesRepository {
         workmateMap.put("chosenRestaurantId", workmate.getChosenRestaurantId());
         workmateMap.put("date", date.toString());
         workmateMap.put("restaurantName", restaurantName);
+        workmateMap.put("favRestaurants", mFavRestaurantList);
 
         db.collection(COLLECTION_WORKMATES).document(workmate.getMail()).set(workmateMap).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
@@ -59,12 +73,9 @@ public class WorkmatesRepository {
     }
 
     public void addFavoriteRestaurant(Restaurant restaurant) {
-        if(mFavRestaurantList == null)
-        {
+        if (mFavRestaurantList == null) {
             initFavRestaurantList();
         }
-
-
 
 
         mFavRestaurantList.add(restaurant.getId());
@@ -75,12 +86,11 @@ public class WorkmatesRepository {
 
         UserManager userManager = UserManager.getInstance();
 
-        Map<String,Object> favMap = new HashMap<>();
-        favMap.put("favRestaurants",mFavRestaurantList);
+        Map<String, Object> favMap = new HashMap<>();
+        favMap.put("favRestaurants", mFavRestaurantList);
 
 
-
-        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).set(favMap).addOnCompleteListener(task -> {
+        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).update(favMap).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.d("TAG", "onComplete error: " + task.getException());
             }
@@ -111,7 +121,8 @@ public class WorkmatesRepository {
                 });
         return mutableWorkmates;
     }
-    public MutableLiveData<List<WorkmateWithRestaurantName>> getAllWorkMatesWithRestaurants(){
+
+    public MutableLiveData<List<WorkmateWithRestaurantName>> getAllWorkMatesWithRestaurants() {
         MutableLiveData<List<WorkmateWithRestaurantName>> mutableLiveData = new MutableLiveData<>();
         List<WorkmateWithRestaurantName> workmatesWithRestaurantNames = new ArrayList<>();
         db.collection(COLLECTION_WORKMATES).get().addOnCompleteListener(task -> {
@@ -147,26 +158,8 @@ public class WorkmatesRepository {
         return mutableLiveData;
     }
 
-
-    public static WorkmatesRepository getInstance() {
-        WorkmatesRepository result = instance;
-        if (result != null) {
-            return result;
-        }
-        synchronized (UserRepository.class) {
-            if (instance == null) {
-                instance = new WorkmatesRepository();
-            }
-            return instance;
-        }
-
-
-    }
-
-
     public void removeFavoriteRestaurant(Restaurant restaurant) {
-        if(mFavRestaurantList == null)
-        {
+        if (mFavRestaurantList == null) {
             initFavRestaurantList();
         }
 
@@ -176,10 +169,10 @@ public class WorkmatesRepository {
 
         restaurantsViewModel.unlikeRestaurant(restaurant);
 
-        Map<String,Object> favMap = new HashMap<>();
-        favMap.put("favRestaurants",mFavRestaurantList);
+        Map<String, Object> favMap = new HashMap<>();
+        favMap.put("favRestaurants", mFavRestaurantList);
 
-        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).set(favMap).addOnCompleteListener(task -> {
+        db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(userManager.getCurrentUser().getEmail())).update(favMap).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.d("TAG", "onComplete error: " + task.getException());
             }
@@ -188,8 +181,7 @@ public class WorkmatesRepository {
 
     public boolean isFavoriteRestaurant(String restaurantId) {
 
-        if(mFavRestaurantList == null)
-        {
+        if (mFavRestaurantList == null) {
             Log.d("tag", "isFavoriteRestaurant: null");
             return false;
         }
@@ -201,8 +193,7 @@ public class WorkmatesRepository {
         MutableLiveData<String> result = new MutableLiveData<>();
 
         db.collection(COLLECTION_WORKMATES).document(Objects.requireNonNull(UserManager.getInstance().getCurrentUser().getEmail())).get().addOnCompleteListener(task -> {
-            if(Objects.requireNonNull(task.getResult().getString("date")).equals(date.toString()))
-            {
+            if (Objects.requireNonNull(task.getResult().getString("date")).equals(date.toString())) {
                 String res;
                 res = task.getResult().getString("chosenRestaurantId");
                 result.setValue(res);

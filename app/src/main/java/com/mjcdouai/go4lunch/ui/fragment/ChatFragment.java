@@ -25,25 +25,22 @@ import java.util.Objects;
 
 public class ChatFragment extends Fragment {
 
-    private FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder> adapter;
-    private FragmentChatBinding mBinding;
     private final FirebaseDatabase database = FirebaseDatabase.getInstance("https://go4lunch-6e797-default-rtdb.europe-west1.firebasedatabase.app/");
     private final DatabaseReference myRef = database.getReference("message");
+    private FirebaseRecyclerAdapter<ChatMessage, ChatViewHolder> adapter;
+    private FragmentChatBinding mBinding;
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-       public static ChatFragment newInstance() {
-           return new ChatFragment();
+    public static ChatFragment newInstance() {
+        return new ChatFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
 
 
     }
@@ -53,10 +50,9 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        mBinding = FragmentChatBinding.inflate(inflater,container,false);
+        mBinding = FragmentChatBinding.inflate(inflater, container, false);
 
         View view = mBinding.getRoot();
-
 
 
         FirebaseRecyclerOptions<ChatMessage> options = new FirebaseRecyclerOptions.Builder<ChatMessage>()
@@ -75,7 +71,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onDataChanged() {
                 super.onDataChanged();
-                if(adapter.getItemCount()>0) {
+                if (adapter.getItemCount() > 0) {
                     mBinding.chatRecyclerview.scrollToPosition(adapter.getItemCount() - 1);
                 }
             }
@@ -94,10 +90,8 @@ public class ChatFragment extends Fragment {
         mBinding.fab.setOnClickListener(view1 -> fabOnclickListener());
 
         mBinding.input.setOnKeyListener((view1, i, keyEvent) -> {
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
-            {
-                switch (keyEvent.getKeyCode())
-                {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                switch (keyEvent.getKeyCode()) {
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_ENTER:
                         fabOnclickListener();
@@ -117,11 +111,11 @@ public class ChatFragment extends Fragment {
 
         // Read the input field and push a new instance
         // of ChatMessage to the Firebase database
-            myRef.push()
+        myRef.push()
                 .setValue(new ChatMessage(input.getText().toString(),
-                        Objects.requireNonNull(FirebaseAuth.getInstance()
-                                        .getCurrentUser())
-                                .getDisplayName()
+                                Objects.requireNonNull(FirebaseAuth.getInstance()
+                                                .getCurrentUser())
+                                        .getDisplayName()
                         )
 
                 );

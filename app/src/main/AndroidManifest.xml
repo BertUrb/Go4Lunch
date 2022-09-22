@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -32,8 +33,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <receiver android:name=".remote.MyFirebaseMessagingService"
-           />
+        <receiver android:name=".remote.MyFirebaseMessagingService" />
 
         <activity
             android:name=".ui.RestaurantDetailsActivity"

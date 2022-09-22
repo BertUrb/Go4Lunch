@@ -9,7 +9,7 @@ public class GooglePlaceDetailsResult {
     @SerializedName("result")
     public Result result = new Result();
 
-    public static class Result  {
+    public static class Result {
         @SerializedName("international_phone_number")
         public String phone_number;
 
@@ -27,22 +27,21 @@ public class GooglePlaceDetailsResult {
 
         @SerializedName("geometry")
         public Geometry geometry = new Geometry();
+        @SerializedName("photos")
+        public List<Photos> photos = new ArrayList<>();
 
-        public static class Geometry{
+        public static class Geometry {
 
             @SerializedName("location")
             public Location location = new Location();
 
-            public static class Location{
+            public static class Location {
                 @SerializedName("lat")
                 public double lat;
                 @SerializedName("lng")
                 public double lng;
             }
         }
-
-        @SerializedName("photos")
-        public List<Photos> photos = new ArrayList<>();
 
         public static class Photos {
             @SerializedName("photo_reference")

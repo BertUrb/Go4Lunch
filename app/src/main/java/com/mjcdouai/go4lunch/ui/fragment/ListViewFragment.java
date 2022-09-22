@@ -32,13 +32,13 @@ import java.util.List;
  */
 public class ListViewFragment extends Fragment implements OnClickRestaurantListener {
 
-    private FragmentListViewBinding mBinding;
     private final RestaurantsViewModel mRestaurantsViewModel = RestaurantsViewModel.getInstance();
+    private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
+    private FragmentListViewBinding mBinding;
     private List<Restaurant> mRestaurantList;
     private List<String> mChosenRestaurantIds;
     private Location mLocation;
     private RestaurantRecyclerviewAdapter mRestaurantRecyclerviewAdapter;
-    private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -68,17 +68,17 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         mChosenRestaurantIds = new ArrayList<>();
 
         mWorkmatesViewModel.getWorkmatesWithRestaurantsNames().observe(getViewLifecycleOwner(), workmateWithRestaurantNames -> {
-            for(WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames ) {
+            for (WorkmateWithRestaurantName workmateWithRestaurantName : workmateWithRestaurantNames) {
                 mChosenRestaurantIds.add(workmateWithRestaurantName.mWorkmate.getChosenRestaurantId());
             }
-        } );
+        });
 
         int radius = new SharedPrefsHelper(requireContext()).getRadius();
 
 
         locationHelper.getLocationLiveData().observe(getViewLifecycleOwner(), location -> {
             Log.d("TAG", "onLocationChanged: ");
-            if(mRestaurantRecyclerviewAdapter != null) {
+            if (mRestaurantRecyclerviewAdapter != null) {
                 mRestaurantRecyclerviewAdapter.setLocation(location);
             }
             mLocation = location;
@@ -86,12 +86,12 @@ public class ListViewFragment extends Fragment implements OnClickRestaurantListe
         });
 
 
-        mRestaurantsViewModel.loadRestaurantNearby(mLocation,radius).observe(getViewLifecycleOwner(), restaurants -> {
+        mRestaurantsViewModel.loadRestaurantNearby(mLocation, radius).observe(getViewLifecycleOwner(), restaurants -> {
             mRestaurantList = restaurants;
 
 
             mRestaurantRecyclerviewAdapter = new RestaurantRecyclerviewAdapter(
-                    mRestaurantList,mChosenRestaurantIds, listener);
+                    mRestaurantList, mChosenRestaurantIds, listener);
             mRestaurantRecyclerviewAdapter.setLocation(mLocation);
             mBinding.recyclerview.setAdapter(mRestaurantRecyclerviewAdapter);
         });

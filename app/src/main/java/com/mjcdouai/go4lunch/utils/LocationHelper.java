@@ -16,11 +16,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class LocationHelper implements LocationListener {
 
-    private Location mLocation;
     private final MutableLiveData<Location> mLocationMutableLiveData = new MutableLiveData<>();
+    private Location mLocation;
 
-    public LocationHelper(Activity host, Context context)
-    {
+    public LocationHelper(Activity host, Context context) {
 
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -39,7 +38,7 @@ public class LocationHelper implements LocationListener {
             mLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         }
 
-        if(mLocation == null) {
+        if (mLocation == null) {
             mLocation = new Location("default Location");
             double lat = 48.856614;
             double lg = 2.3522219;
@@ -51,20 +50,20 @@ public class LocationHelper implements LocationListener {
 
 
     }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
         mLocation = location;
         mLocationMutableLiveData.setValue(mLocation);
 
     }
-    public Location getLocation()
-    {
+
+    public Location getLocation() {
         return mLocation;
     }
 
 
-    public MutableLiveData<Location> getLocationLiveData()
-    {
+    public MutableLiveData<Location> getLocationLiveData() {
         mLocationMutableLiveData.setValue(mLocation);
         return mLocationMutableLiveData;
 

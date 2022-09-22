@@ -11,51 +11,45 @@ import com.mjcdouai.go4lunch.utils.WorkmateWithRestaurantName;
 import java.util.List;
 
 public class WorkmatesViewModel extends ViewModel {
+    private static volatile WorkmatesViewModel instance;
     private final WorkmatesRepository mWorkmatesRepository = WorkmatesRepository.getInstance();
-    private static volatile  WorkmatesViewModel instance;
-
-    public MutableLiveData<List<WorkmateWithRestaurantName>> getWorkmatesWithRestaurantsNames()
-    {
-        return mWorkmatesRepository.getWorkmatesWithRestaurants();
-    }
-
-    public  MutableLiveData<String> getMyRestaurantChoiceId()
-    {
-        return mWorkmatesRepository.getMyRestaurantChoiceId();
-    }
-
-    public MutableLiveData<List<WorkmateWithRestaurantName>> getAllWorkmatesWithRestaurantNames(){
-        return mWorkmatesRepository.getAllWorkMatesWithRestaurants();
-    }
-
-
-    public MutableLiveData<List<Workmate>> getWorkmateInThis(String restaurantId){
-        return mWorkmatesRepository.getWorkmateInThis(restaurantId);
-    }
-
-    public void insertWorkmate(Workmate workmate, String restaurantName) {
-        mWorkmatesRepository.insertWorkmate(workmate,restaurantName);
-    }
-
-    public void addFavoriteRestaurant(Restaurant restaurant)
-    {
-        mWorkmatesRepository.addFavoriteRestaurant(restaurant);
-    }
 
     public static WorkmatesViewModel getInstance() {
         WorkmatesViewModel result = instance;
 
-        if(result != null)
-        {
+        if (result != null) {
             return result;
         }
-        synchronized (WorkmatesViewModel.class){
-            if(instance == null)
-            {
+        synchronized (WorkmatesViewModel.class) {
+            if (instance == null) {
                 instance = new WorkmatesViewModel();
             }
             return instance;
         }
+    }
+
+    public MutableLiveData<List<WorkmateWithRestaurantName>> getWorkmatesWithRestaurantsNames() {
+        return mWorkmatesRepository.getWorkmatesWithRestaurants();
+    }
+
+    public MutableLiveData<String> getMyRestaurantChoiceId() {
+        return mWorkmatesRepository.getMyRestaurantChoiceId();
+    }
+
+    public MutableLiveData<List<WorkmateWithRestaurantName>> getAllWorkmatesWithRestaurantNames() {
+        return mWorkmatesRepository.getAllWorkMatesWithRestaurants();
+    }
+
+    public MutableLiveData<List<Workmate>> getWorkmateInThis(String restaurantId) {
+        return mWorkmatesRepository.getWorkmateInThis(restaurantId);
+    }
+
+    public void insertWorkmate(Workmate workmate, String restaurantName) {
+        mWorkmatesRepository.insertWorkmate(workmate, restaurantName);
+    }
+
+    public void addFavoriteRestaurant(Restaurant restaurant) {
+        mWorkmatesRepository.addFavoriteRestaurant(restaurant);
     }
 
     public void removeFavoriteRestaurant(Restaurant restaurant) {

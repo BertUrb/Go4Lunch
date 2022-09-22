@@ -17,18 +17,16 @@ import com.mjcdouai.go4lunch.databinding.RestaurantItemListBinding;
 import com.mjcdouai.go4lunch.model.Restaurant;
 import com.mjcdouai.go4lunch.remote.GoogleApi;
 
-
 import java.util.Collections;
 import java.util.List;
 
 public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<RestaurantViewHolder> {
 
     private final List<Restaurant> mRestaurantList;
-    private RestaurantItemListBinding mBinding;
     private final OnClickRestaurantListener mOnClickRestaurantListener;
-    private Location mLocation;
     private final List<String> mChosenRestaurantIds;
-
+    private RestaurantItemListBinding mBinding;
+    private Location mLocation;
 
 
     public RestaurantRecyclerviewAdapter(List<Restaurant> restaurantList, List<String> chosenRestaurantIds, OnClickRestaurantListener onClickRestaurantListener) {
@@ -37,16 +35,17 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
         mChosenRestaurantIds = chosenRestaurantIds;
 
     }
-    public void setLocation(Location location){
+
+    public void setLocation(Location location) {
         Log.d("TAG", "setLocation: " + location.toString());
-        mLocation =location;
+        mLocation = location;
     }
 
     @NonNull
     @Override
     public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mBinding = RestaurantItemListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new RestaurantViewHolder(mBinding,mOnClickRestaurantListener);
+        return new RestaurantViewHolder(mBinding, mOnClickRestaurantListener);
     }
 
     @Override
@@ -107,12 +106,11 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
         temp.setLongitude(locationLon);
         String res = "0 m";
 
-        if(mLocation != null)
-        {
+        if (mLocation != null) {
             res = Math.round(mLocation.distanceTo(temp)) + " m";
         }
 
-        return res ;
+        return res;
     }
 
     @Override
@@ -120,8 +118,7 @@ public class RestaurantRecyclerviewAdapter extends RecyclerView.Adapter<Restaura
         return mRestaurantList.size();
     }
 
-    public String getWorkmateCountIn(String restaurantId)
-    {
-        return "(" + Collections.frequency(mChosenRestaurantIds,restaurantId) + ")";
+    public String getWorkmateCountIn(String restaurantId) {
+        return "(" + Collections.frequency(mChosenRestaurantIds, restaurantId) + ")";
     }
 }

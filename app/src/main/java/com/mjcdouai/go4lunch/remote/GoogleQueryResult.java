@@ -9,12 +9,6 @@ public class GoogleQueryResult {
     @SerializedName("results")
     public List<Result> results = new ArrayList<>();
 
-    @SerializedName("next_page_token")
-    public String next_page_token;
-
-    @SerializedName("status")
-    public String status;
-
 
     public static class Result {
 
@@ -32,10 +26,15 @@ public class GoogleQueryResult {
 
         @SerializedName("geometry")
         public Geometry geometry = new Geometry();
+        @SerializedName("opening_hours")
+        public OpeningHours opening_hours = new OpeningHours();
+        @SerializedName("photos")
+        public List<Photo> photos = new ArrayList<>();
 
         public static class Geometry {
             @SerializedName("location")
             public Location location = new Location();
+
             public static class Location {
                 @SerializedName("lat")
                 public double lat;
@@ -44,23 +43,18 @@ public class GoogleQueryResult {
                 public double lon;
             }
         }
-        @SerializedName("opening_hours")
-        public OpeningHours opening_hours = new OpeningHours();
 
         public static class OpeningHours {
             @SerializedName("open_now")
             public boolean open_now;
 
         }
-        @SerializedName("photos")
-        public List<Photo> photos = new ArrayList<>();
 
         public static class Photo {
             @SerializedName("photo_reference")
             public String mPhotoReference;
         }
     }
-
 
 
 }

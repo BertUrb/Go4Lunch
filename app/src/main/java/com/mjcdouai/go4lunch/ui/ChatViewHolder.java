@@ -14,7 +14,6 @@ public class ChatViewHolder extends RecyclerView.ViewHolder {
     TextView messageText;
 
 
-
     public ChatViewHolder(View itemView) {
         super(itemView);
 

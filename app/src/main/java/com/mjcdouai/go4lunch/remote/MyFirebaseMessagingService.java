@@ -46,7 +46,6 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
                 if (!Objects.equals(restaurantName, context.getResources().getString(R.string.not_decided))) {
 
 
-
                     db.collection("workmates").whereEqualTo("chosenRestaurantId", res)
                             .whereEqualTo("date", date.toString())
                             .get()
@@ -64,19 +63,17 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
 
                                 }
                                 String title = context.getResources().getString(R.string.choose_notification, restaurantName);
-                                if(workmates.length()>1)
-                                {
-                                    workmates.setLength(workmates.length() -1);
+                                if (workmates.length() > 1) {
+                                    workmates.setLength(workmates.length() - 1);
                                 }
-                                String body = context.getResources().getString(R.string.workmates_notification, workmates );
+                                String body = context.getResources().getString(R.string.workmates_notification, workmates);
 
                                 Log.d("TAGn", "onMessageReceived: " + title);
-                                    Log.d("TAGn", "onMessageReceived: 4");
-                                    mRestaurantsViewModel.loadRestaurantDetails(res).observeForever(restaurant -> showNotification(context,
-                                            title,
-                                            body,
-                                            restaurant));
-
+                                Log.d("TAGn", "onMessageReceived: 4");
+                                mRestaurantsViewModel.loadRestaurantDetails(res).observeForever(restaurant -> showNotification(context,
+                                        title,
+                                        body,
+                                        restaurant));
 
 
                             });
@@ -88,28 +85,27 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
         currentDate.setTimeInMillis(System.currentTimeMillis());
         Calendar dueDate = Calendar.getInstance();
 
-        dueDate.set(Calendar.HOUR_OF_DAY,12);
-        dueDate.set(Calendar.MINUTE,0);
-        dueDate.set(Calendar.SECOND,0);
+        dueDate.set(Calendar.HOUR_OF_DAY, 12);
+        dueDate.set(Calendar.MINUTE, 0);
+        dueDate.set(Calendar.SECOND, 0);
 
-        if(dueDate.before(currentDate))
-        {
-            dueDate.add(Calendar.HOUR_OF_DAY,24);
+        if (dueDate.before(currentDate)) {
+            dueDate.add(Calendar.HOUR_OF_DAY, 24);
         }
 
-        long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+        long timeDiff = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
 
-        Intent notificationIntent = new Intent( context, MyFirebaseMessagingService. class ) ;
-        PendingIntent pendingIntent = PendingIntent. getBroadcast ( context, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT| PendingIntent.FLAG_IMMUTABLE ) ;
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context. ALARM_SERVICE ) ;
+        Intent notificationIntent = new Intent(context, MyFirebaseMessagingService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
         SharedPrefsHelper sharedPrefsHelper = new SharedPrefsHelper(context);
-        if(sharedPrefsHelper.getNotification()) {
+        if (sharedPrefsHelper.getNotification()) {
             alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeDiff, pendingIntent);
         }
     }
 
-    private RemoteViews getCustomDesign(Context context,String title,
+    private RemoteViews getCustomDesign(Context context, String title,
                                         String message) {
         RemoteViews remoteViews = new RemoteViews(
                 context.getApplicationContext().getPackageName(),
@@ -122,7 +118,7 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
     }
 
 
-    public void showNotification(Context context,String title,
+    public void showNotification(Context context, String title,
                                  String message, Restaurant restaurant) {
 
         Intent intent
@@ -130,11 +126,11 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
 
         String channel_id = "notification_channel";
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-             intent.putExtra("Restaurant",restaurant);
+        intent.putExtra("Restaurant", restaurant);
         PendingIntent pendingIntent
                 = PendingIntent.getActivity(
                 context, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT|PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
 
         NotificationCompat.Builder builder
@@ -150,7 +146,7 @@ public class MyFirebaseMessagingService extends BroadcastReceiver {
 
 
         builder = builder.setContent(
-                getCustomDesign(context,title, message));
+                getCustomDesign(context, title, message));
 
 
         NotificationManager notificationManager

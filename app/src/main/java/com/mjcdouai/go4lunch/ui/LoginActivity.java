@@ -30,22 +30,19 @@ public class LoginActivity extends AppCompatActivity {
     );
 
 
-
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             assert user != null;
-            Workmate workmate = new Workmate(user.getEmail(),user.getDisplayName(), Objects.requireNonNull(user.getPhotoUrl()).toString());
+            Workmate workmate = new Workmate(user.getEmail(), user.getDisplayName(), Objects.requireNonNull(user.getPhotoUrl()).toString());
             WorkmatesRepository workmatesRepository = WorkmatesRepository.getInstance();
-            workmatesRepository.insertWorkmate(workmate,getResources().getString(R.string.not_decided));
+            workmatesRepository.insertWorkmate(workmate, getResources().getString(R.string.not_decided));
             workmatesRepository.initFavRestaurantList();
             startProfileActivity();
 
         }
     }
-
-
 
 
     @Override
@@ -54,35 +51,30 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
     }
+
     @Override
     public void onStart() {
 
         super.onStart();
 
-        if(mUserManager.isCurrentUserLogged())
-        {
+        if (mUserManager.isCurrentUserLogged()) {
             WorkmatesRepository.getInstance().initFavRestaurantList();
             startProfileActivity();
-        }
-        else
-        {
+        } else {
             startSignInIntent();
         }
 
 
-
-
     }
-    private void startProfileActivity()
-    {
+
+    private void startProfileActivity() {
 
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
 
     }
 
-    private void startSignInIntent()
-    {
+    private void startSignInIntent() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build());
@@ -98,5 +90,4 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
-    }
+}

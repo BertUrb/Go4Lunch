@@ -29,10 +29,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
+    private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
     private ActivityRestaurantDetailsBinding mBinding;
     private Workmate mWorkmate;
     private List<Workmate> mWorkmates = new ArrayList<>();
-    private final WorkmatesViewModel mWorkmatesViewModel = WorkmatesViewModel.getInstance();
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -53,7 +53,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         Log.d("TAG", "onCreate: id:" + restaurant.getId());
 
         if (restaurant.getPhotoReferences().size() > 0) {
-            String url = GoogleApi.getImageUrl(restaurant.getPhotoReferences().get(0),BuildConfig.GMAP_API_KEY);
+            String url = GoogleApi.getImageUrl(restaurant.getPhotoReferences().get(0), BuildConfig.GMAP_API_KEY);
 
             Glide.with(mBinding.getRoot().getContext())
                     .load(url)
@@ -66,11 +66,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             mBinding.callBtn.setOnClickListener(view -> {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 String[] perms = {Manifest.permission.CALL_PHONE};
-                if(!EasyPermissions.hasPermissions(this,perms))
-                {
-                    EasyPermissions.requestPermissions(this,getString(R.string.phone_call),1,perms);
-                }
-                else {
+                if (!EasyPermissions.hasPermissions(this, perms)) {
+                    EasyPermissions.requestPermissions(this, getString(R.string.phone_call), 1, perms);
+                } else {
                     callIntent.setData(Uri.parse("tel:" + restaurant.getPhone().replaceAll(" ", "")));
                     startActivity(callIntent);
                 }
@@ -82,15 +80,14 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         Log.d("TAG", "onCreate: " + restaurant.isLiked());
         changeLikeStatus(restaurant.isLiked());
 
-        mBinding.starBtn.setOnClickListener(view ->  {
+        mBinding.starBtn.setOnClickListener(view -> {
 
 
-            if(!restaurant.isLiked()) {
+            if (!restaurant.isLiked()) {
                 mWorkmatesViewModel.addFavoriteRestaurant(restaurant);
                 restaurant.setLiked(true);
 
-            }
-            else {
+            } else {
                 mWorkmatesViewModel.removeFavoriteRestaurant(restaurant);
                 restaurant.setLiked(false);
             }
@@ -127,7 +124,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         Log.d("TAG", "starNumber: " + starNumber);
 
 
-
         for (int i = 0; i < starNumber; i++) {
             stars.append(star);
         }
@@ -147,10 +143,8 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                             userManager.getCurrentUser().getDisplayName(),
                             Objects.requireNonNull(userManager.getCurrentUser().getPhotoUrl()).toString());
 
-                    for(Workmate workmate: mWorkmates)
-                    {
-                        if(Objects.equals(workmate.getMail(), mWorkmate.getMail()))
-                        {
+                    for (Workmate workmate : mWorkmates) {
+                        if (Objects.equals(workmate.getMail(), mWorkmate.getMail())) {
                             mWorkmate.setChosenRestaurantId(restaurant.getId());
                         }
                     }
@@ -163,21 +157,18 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 });
 
 
-
-
-
         mBinding.joinFab.setOnClickListener(view -> {
             if (Objects.equals(mWorkmate.getChosenRestaurantId(), restaurant.getId())) {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_outline_24);
                 mWorkmate.setChosenRestaurantId("");
                 Objects.requireNonNull(mBinding.joiningWorkmates.getAdapter()).notifyItemRemoved(mWorkmates.indexOf(mWorkmate));
                 mWorkmates.remove(mWorkmate);
-                mWorkmatesViewModel.insertWorkmate(mWorkmate,getResources().getString(R.string.not_decided));
+                mWorkmatesViewModel.insertWorkmate(mWorkmate, getResources().getString(R.string.not_decided));
 
             } else {
                 mBinding.joinFab.setImageResource(R.drawable.green_check_circle_24);
                 mWorkmate.setChosenRestaurantId(restaurant.getId());
-                mWorkmatesViewModel.insertWorkmate(mWorkmate,restaurant.getName());
+                mWorkmatesViewModel.insertWorkmate(mWorkmate, restaurant.getName());
                 mWorkmates.add(mWorkmate);
                 Objects.requireNonNull(mBinding.joiningWorkmates.getAdapter()).notifyItemInserted(mWorkmates.indexOf(mWorkmate));
             }

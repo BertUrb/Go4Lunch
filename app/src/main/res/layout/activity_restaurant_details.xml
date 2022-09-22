@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RestaurantDetailsActivity"
-    >
+    tools:context=".ui.RestaurantDetailsActivity">
 
     <ImageView
         android:id="@+id/restaurant_image"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:contentDescription="@null"
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
+        android:contentDescription="@null"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="@id/restaurant_image"
         app:layout_constraintEnd_toEndOf="@id/restaurant_image"
@@ -46,8 +47,8 @@
                 android:id="@+id/restaurant_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
                 android:textColor="@color/white"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toStartOf="@id/restaurant_stars"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,9 +57,9 @@
                 android:id="@+id/restaurant_stars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="@id/restaurant_name"
+                app:layout_constraintBottom_toBottomOf="@id/restaurant_name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/restaurant_name"/>
+                app:layout_constraintTop_toTopOf="@id/restaurant_name" />
 
             <TextView
                 android:id="@+id/restaurant_address_and_cuisine"
@@ -94,16 +95,16 @@
 
         <Button
             android:id="@+id/star_btn"
+            android:layout_width="85dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
             android:layout_marginHorizontal="120dp"
             android:layout_marginTop="5dp"
-            android:drawableTop="@drawable/ic_baseline_star_outline_48"
-            android:text="@string/like_btn"
             android:backgroundTint="#FFFFFF"
+            android:drawableTop="@drawable/ic_baseline_star_outline_48"
             android:drawableTint="@color/my_orange"
-            android:layout_gravity="center|center_vertical"
-            tools:ignore="NotSibling"
-            android:layout_width="85dp"
-            android:layout_height="wrap_content"/>
+            android:text="@string/like_btn"
+            tools:ignore="NotSibling" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/web_btn"
@@ -126,11 +127,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frame_with_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/workmates_item_list"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        tools:listitem="@layout/workmates_item_list" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

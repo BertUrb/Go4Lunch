@@ -63,27 +63,20 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    final FragmentManager mFragmentManager = getSupportFragmentManager();
+    private final Fragment mWorkmatesFragment = new WorkmatesFragment();
+    private final UserManager mUserManager = UserManager.getInstance();
+    Intent mAutoCompleteIntent;
+    ActivityResultLauncher<Intent> mStartForResult;
     private ActivityHomeBinding mHomeBinding;
-
-
-
     private Fragment mMapFragment;
     private Fragment mListViewFragment;
     private Fragment mChatFragment;
-    private final Fragment mWorkmatesFragment = new WorkmatesFragment();
-    final FragmentManager mFragmentManager = getSupportFragmentManager();
     private Fragment mActive = mMapFragment;
-
     private RestaurantsViewModel mRestaurantsViewModel;
-
-
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private final UserManager mUserManager = UserManager.getInstance();
-    Intent mAutoCompleteIntent;
-
-    ActivityResultLauncher<Intent> mStartForResult;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -107,7 +100,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
 
 
         return super.onCreateOptionsMenu(menu);
@@ -122,10 +115,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         Places.initialize(getBaseContext(), BuildConfig.GMAP_API_KEY);
 
 
-        if(new SharedPrefsHelper(getBaseContext()).getNotification()) {
+        if (new SharedPrefsHelper(getBaseContext()).getNotification()) {
             scheduleNotification();
 
-        }else {
+        } else {
             cancelNotification();
         }
 
@@ -144,7 +137,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mChatFragment = ChatFragment.newInstance();
             setContentView(mHomeBinding.getRoot());
 
-            mFragmentManager.beginTransaction().add(R.id.main_content,mChatFragment,"4").hide(mChatFragment).commit();
+            mFragmentManager.beginTransaction().add(R.id.main_content, mChatFragment, "4").hide(mChatFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mWorkmatesFragment, "3").hide(mWorkmatesFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mListViewFragment, "2").hide(mListViewFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.main_content, mMapFragment, "1").commit();
@@ -165,10 +158,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         assert intent1 != null;
                         Place place = Autocomplete.getPlaceFromIntent(intent1);
 
-                        if(mActive == mMapFragment){
+                        if (mActive == mMapFragment) {
                             ((MapFragment) mMapFragment).moveTo(Objects.requireNonNull(place.getLatLng()));
-                        }
-                        else if (mActive == mListViewFragment) {
+                        } else if (mActive == mListViewFragment) {
                             mRestaurantsViewModel.loadRestaurantDetails(place.getId()).observe(this, restaurant -> {
                                 Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
                                 restaurantDetails.putExtra("Restaurant", restaurant);
@@ -180,16 +172,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 });
 
 
-
-
-
     }
 
     private void cancelNotification() {
         Intent notificationIntent = new Intent(this, MyFirebaseMessagingService.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
 
     }
@@ -229,10 +218,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (text.equals(getString(R.string.your_lunch))) {
             WorkmatesViewModel.getInstance().getMyRestaurantChoiceId().observe(this,
                     restaurantId -> mRestaurantsViewModel.loadRestaurantDetails(restaurantId).observe(this, restaurant -> {
-                Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
-                restaurantDetails.putExtra("Restaurant", restaurant);
-                startActivity(restaurantDetails);
-            }));
+                        Intent restaurantDetails = new Intent(getBaseContext(), RestaurantDetailsActivity.class);
+                        restaurantDetails.putExtra("Restaurant", restaurant);
+                        startActivity(restaurantDetails);
+                    }));
         } else if (text.equals(getString(R.string.settings))) {
             Intent settingsActivity = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(settingsActivity);
@@ -254,7 +243,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mToolbar.setTitle(R.string.available_workmates);
             mActive = mWorkmatesFragment;
             mHomeBinding.homeToolbar.getMenu().getItem(0).setVisible(false);
-        } else if(text.equals(getString(R.string.bottom_navigation_menu_chat))) {
+        } else if (text.equals(getString(R.string.bottom_navigation_menu_chat))) {
             mFragmentManager.beginTransaction().hide(mActive).show(mChatFragment).commit();
             mToolbar.setTitle(R.string.bottom_navigation_menu_chat);
             mActive = mChatFragment;
@@ -314,22 +303,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         currentDate.setTimeInMillis(System.currentTimeMillis());
         Calendar dueDate = Calendar.getInstance();
         dueDate.setTimeInMillis(System.currentTimeMillis());
-        dueDate.set(Calendar.HOUR_OF_DAY,15);
-        dueDate.set(Calendar.MINUTE,40);
-        dueDate.set(Calendar.SECOND,0);
+        dueDate.set(Calendar.HOUR_OF_DAY, 15);
+        dueDate.set(Calendar.MINUTE, 40);
+        dueDate.set(Calendar.SECOND, 0);
 
-        if(dueDate.before(currentDate))
-        {
-            dueDate.add(Calendar.HOUR_OF_DAY,24);
+        if (dueDate.before(currentDate)) {
+            dueDate.add(Calendar.HOUR_OF_DAY, 24);
         }
 
-        long timeDiff= dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-        Intent notificationIntent = new Intent( this, MyFirebaseMessagingService. class ) ;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast ( this, 0 , notificationIntent , PendingIntent. FLAG_UPDATE_CURRENT |PendingIntent.FLAG_IMMUTABLE ) ;
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context. ALARM_SERVICE ) ;
+        long timeDiff = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+        Intent notificationIntent = new Intent(this, MyFirebaseMessagingService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
 
-        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeDiff, pendingIntent) ;
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timeDiff, pendingIntent);
     }
 
 

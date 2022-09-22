@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="110dp"
-    android:layout_gravity="start"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_gravity="start">
 
     <TextView
+        android:id="@+id/restaurant_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/restaurant_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:gravity="start"
         android:textStyle="bold"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/restaurant_address"
@@ -26,66 +26,56 @@
         app:layout_constraintTop_toBottomOf="@id/restaurant_name" />
 
     <TextView
+        android:id="@+id/restaurant_open_until"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/restaurant_open_until"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintTop_toBottomOf="@id/restaurant_address"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/restaurant_address" />
 
     <TextView
+        android:id="@+id/restaurant_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/restaurant_distance"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toStartOf="@id/restaurant_image"
-        app:layout_constraintTop_toTopOf="@id/restaurant_image"
-        />
+        app:layout_constraintTop_toTopOf="@id/restaurant_image" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@id/stars"
-        app:layout_constraintEnd_toStartOf="@id/workmates_count"
-        />
+        android:contentDescription="@null"
+        app:layout_constraintEnd_toStartOf="@id/workmates_count" />
 
     <TextView
+        android:id="@+id/workmates_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/workmates_count"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toStartOf="@id/restaurant_image"
         app:layout_constraintBottom_toTopOf="@id/stars"
-        />
+        app:layout_constraintEnd_toStartOf="@id/restaurant_image" />
 
     <TextView
+        android:id="@+id/stars"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/stars"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="@id/restaurant_image"
-        app:layout_constraintEnd_toStartOf="@id/restaurant_image"
-        />
+        app:layout_constraintEnd_toStartOf="@id/restaurant_image" />
 
     <ImageView
-        android:layout_width="100dp"
-        android:src="@drawable/ic_baseline_image_24"
-        android:layout_height="100dp"
         android:id="@+id/restaurant_image"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="centerCrop"
-
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-
-
-
-
+        android:src="@drawable/ic_baseline_image_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
