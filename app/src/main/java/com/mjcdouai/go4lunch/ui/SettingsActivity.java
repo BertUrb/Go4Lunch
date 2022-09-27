@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.mjcdouai.go4lunch.R;
 import com.mjcdouai.go4lunch.databinding.ActivitySettingsBinding;
+import com.mjcdouai.go4lunch.manager.UserManager;
 import com.mjcdouai.go4lunch.utils.SharedPrefsHelper;
+import com.mjcdouai.go4lunch.viewModel.WorkmatesViewModel;
 
 public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
@@ -24,6 +26,11 @@ public class SettingsActivity extends AppCompatActivity implements SeekBar.OnSee
         mBinding.rangeNumber.setText(getString(R.string.meters, mBinding.rangePicker.getProgress()));
 
         mBinding.rangePicker.setOnSeekBarChangeListener(this);
+        mBinding.deleteButton.setOnClickListener(view -> {
+            UserManager userManager = UserManager.getInstance();
+            userManager.deleteUser(view.getContext());
+            finish();
+        });
         mBinding.saveButton.setOnClickListener(view -> {
 
             sharedPrefsHelper.setRadius(mBinding.rangePicker.getProgress());

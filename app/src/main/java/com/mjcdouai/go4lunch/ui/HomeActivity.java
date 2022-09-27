@@ -303,8 +303,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         currentDate.setTimeInMillis(System.currentTimeMillis());
         Calendar dueDate = Calendar.getInstance();
         dueDate.setTimeInMillis(System.currentTimeMillis());
-        dueDate.set(Calendar.HOUR_OF_DAY, 15);
-        dueDate.set(Calendar.MINUTE, 40);
+        dueDate.set(Calendar.HOUR_OF_DAY, 12);
+        dueDate.set(Calendar.MINUTE, 0);
         dueDate.set(Calendar.SECOND, 0);
 
         if (dueDate.before(currentDate)) {

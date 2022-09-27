@@ -16,7 +16,7 @@ public class ChatMessage {
 
     @SuppressWarnings("unused")
     public ChatMessage() {
-
+        // Required empty public constructor
     }
 
 
